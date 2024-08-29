@@ -1,4 +1,4 @@
-# SpaceEngine 0.990 详细信息生成器《星示昭明》
+# SpaceEngine 0.990 详细信息生成器《星示昭明》(第二版半成品)
 
 协议：[GPLv2](https://www.gnu.org/licenses/licenses.html)
 
