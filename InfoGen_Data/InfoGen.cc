@@ -30,6 +30,7 @@
 
 #include "Sources/composite.hxx"
 #include "Sources/final.hxx"
+#include "Sources/gbuffer_object.hxx"
 #include "Sources/gbuffer_system.hxx"
 
 #include "InfoGen.h"
@@ -45,6 +46,7 @@ variables_map         OptionsVariables;
 path                  InputFile;
 path                  OutputPath = "./IGOutputData";
 bool                  MakeDir;
+bool                  FixOrbitPlane = 0;
 
 path                  Template = "Markdown";
 map<ustring, path>    OutputTemplates;
@@ -52,6 +54,7 @@ path                  TemplatePrefix;
 vector<path>          InstallDirectories;
 
 path                  Target;
+float64               OrbitCalculatorEpoch;
 
 map<ustring, ustring> StaticStrings
 {
@@ -126,6 +129,9 @@ _NOTE(R"((注:这里的"源
     ("mkdir", _TXT("如果输出目录不存在就自动创建"))
     ("seed", value<uint32_t>()->value_name("<seed>")
         ->default_value(random_device()()), _TXT("随机数生成器的种子，如果不指定则随机生成，范围是0-4294967295"))
+    ("epoch", value<float64>()->value_name("<JD>")
+        ->default_value(GetJDFromSystem()), _TXT("轨道计算器的历元，默认为当前系统时间"))
+    ("fix-orbit-plane,f", _TXT("修正轨道平面"))
     ("show-variables", _TXT("显示变量"))
     ("verbose,v", _TXT("显示日志"))
     ("help,h", _TXT("显示帮助"));
@@ -135,26 +141,26 @@ void InfoGenVariableList()
 {
     cout << _TITLE("Variable List")
 _TXT(R"(
-  [Name]               [Source]    [Type]                [Note]
-  MainTitle            [final]     (Raw string)          System name
-  Content              [final]     (Preprocessed string) Content
-  ContentTitle         [composite] (Raw string)          Content Title
-  ContentItem          [composite] (Raw string)          Content Item
-  ContentStarsTitle    [composite] (Preprocessed string) Star content title
-  ContentStars         [composite] (Preprocessed string) Star content item list
-  ContentPlanetsTitle  [composite] (Preprocessed string) Planet content title
-  ContentPlanets       [composite] (Preprocessed string) Planet content item list
-  ContentDPlanetsTitle [composite] (Preprocessed string) Dwarf planet content title
-  ContentDwarfPlanets  [composite] (Preprocessed string) Dwarf planet content item list
-  General              [final]     (Preprocessed string) System general information table
-  SystemAge            [composite] (Real number)         System age
-  StarCount            [composite] (Integer number)      Number of stars
-  PlanetCount          [composite] (Integer number)      Number of planets
-  DwarfPlanetCount     [composite] (Integer number)      Number of dwarf planets
-  SatelliteCount       [composite] (Integer number)      Number of satellites
-  MinorPlanetCount     [composite] (Integer number)      Number of minor planets
-  CometCount           [composite] (Integer number)      Number of comets
-  CombinedSpectralType [composite] (Raw string)          Combined spectral type
+  [Name]               [Range]         [Type]                [Note]
+  MainTitle            [Main]          (Raw string)          System name
+  Content              [Main]          (Preprocessed string) Content
+  General              [Main]          (Preprocessed string) System general information table
+  ContentTitle         [ContentFormat] (Raw string)          Content Title
+  ContentItem          [ContentFormat] (Raw string)          Content Item
+  ContentStarsTitle    [Contents]      (Preprocessed string) Star content title
+  ContentStars         [Contents]      (Preprocessed string) Star content item list
+  ContentPlanetsTitle  [Contents]      (Preprocessed string) Planet content title
+  ContentPlanets       [Contents]      (Preprocessed string) Planet content item list
+  ContentDPlanetsTitle [Contents]      (Preprocessed string) Dwarf planet content title
+  ContentDwarfPlanets  [Contents]      (Preprocessed string) Dwarf planet content item list
+  SystemAge            [General]       (Real number)         System age
+  StarCount            [General]       (Integer number)      Number of stars
+  PlanetCount          [General]       (Integer number)      Number of planets
+  DwarfPlanetCount     [General]       (Integer number)      Number of dwarf planets
+  SatelliteCount       [General]       (Integer number)      Number of satellites
+  MinorPlanetCount     [General]       (Integer number)      Number of minor planets
+  CometCount           [General]       (Integer number)      Number of comets
+  CombinedSpectralType [General]       (Raw string)          Combined spectral type
 )");
 }
 
@@ -268,6 +274,18 @@ void InfoGenOptionLoad()
         CSESysDebug("InfoGen", CSEDebugger::INFO,
             fmt::format("precision = {}", Precision));
     }*/
+
+    if (OptionsVariables.count("epoch"))
+    {
+        OrbitCalculatorEpoch = OptionsVariables.at("epoch").as<float64>();
+        CSESysDebug("InfoGen", CSEDebugger::INFO,
+            fmt::format("epoch = {}", OrbitCalculatorEpoch));
+    }
+
+    if (OptionsVariables.count("fix-orbit-plane"))
+    {
+        FixOrbitPlane = 1;
+    }
 }
 
 void LoadStaticStrings(const scenario::SharedTablePointer& Table)
@@ -434,6 +452,7 @@ IGEXPORT void IGCALL InfoGenMain(int argc, char const* const* argv)
     PlanetarySystemPointer System = LoadSystem(InputFile);
 
     gbuffer_system(System);
+    gbuffer_object(System);
     composite(System);
     final(System);
 

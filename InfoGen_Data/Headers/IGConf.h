@@ -28,6 +28,8 @@ extern boost::program_options::variables_map         OptionsVariables;
 extern std::filesystem::path                         InputFile;
 extern std::filesystem::path                         OutputPath;
 extern bool                                          MakeDir;
+extern cse::float64                                  OrbitCalculatorEpoch;
+extern bool                                          FixOrbitPlane;
 
 extern std::filesystem::path                         Template;
 extern std::map<cse::ustring, std::filesystem::path> OutputTemplates;

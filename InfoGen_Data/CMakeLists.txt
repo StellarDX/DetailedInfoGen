@@ -13,7 +13,7 @@ SET_TARGET_PROPERTIES(${MAIN_PROGRAM_NAME}Lib PROPERTIES
 target_include_directories(${MAIN_PROGRAM_NAME}Lib PRIVATE ${CSE_INCLUDE_DIRS} ${FMT_HEADERS_DIR} Headers Headers/InfoGen)
 target_link_directories(${MAIN_PROGRAM_NAME}Lib PRIVATE ${CSE_LIBRARY_DIRS} ${FMT_LIBRARY_DIR})
 target_link_libraries(${MAIN_PROGRAM_NAME}Lib PRIVATE
-    CSE_PlanSystem CSE_Object CSE_Parser CSE_MathExtras_Sexagesimal CSE_Base
+    CSE_PlanSystem CSE_Physics CSE_Object CSE_Parser CSE_MathExtras_Sexagesimal CSE_Base
     Boost::regex Boost::program_options fmt::fmt)
 
 install(
