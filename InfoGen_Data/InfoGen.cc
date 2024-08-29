@@ -354,7 +354,9 @@ void LoadTemplate()
 
 string LoadTemplateProfile(string Index)
 {
-    string Path = OutputTemplates.at(Index).string();
+    string Path;
+    try {Path = OutputTemplates.at(Index).string();}
+    catch (...) {return "";}
     ifstream fin(canonical(TemplatePrefix + "/" + Path));
     stringstream Buf;
     Buf << fin.rdbuf();

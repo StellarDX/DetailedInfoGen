@@ -38,9 +38,12 @@ void LoadContentFormatStrings()
     cse::CSESysDebug("composite", cse::CSEDebugger::INFO, "Loading Content format strings...");
 
     string TemplateFile = LoadTemplateProfile("ContentFormat");
-    istringstream is(TemplateFile);
-    getline(is, ContentTitleFormatString);
-    getline(is, ContentItemFormatString);
+    if (!TemplateFile.empty())
+    {
+        istringstream is(TemplateFile);
+        getline(is, ContentTitleFormatString);
+        getline(is, ContentItemFormatString);
+    }
 
     FullContentFormatString = LoadTemplateProfile("Contents");
 

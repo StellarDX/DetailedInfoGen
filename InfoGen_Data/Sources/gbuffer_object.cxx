@@ -29,6 +29,8 @@
 
 std::map<cse::PlanetarySystemPointer, cse::Orbit::OrbitStateType> Coordinates;
 
+std::map<cse::PlanetarySystemPointer, fmt::dynamic_format_arg_store<fmt::format_context>> ObjectCharacteristics;
+
 bool IsMajorObject(cse::Object Obj)
 {
     return Obj.Type == "Star" || Obj.Type == "Planet" || Obj.Type == "DwarfPlanet" ||

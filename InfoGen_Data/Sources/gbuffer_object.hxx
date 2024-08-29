@@ -28,6 +28,8 @@
 
 extern std::map<cse::PlanetarySystemPointer, cse::Orbit::OrbitStateType> Coordinates;
 
+extern std::map<cse::PlanetarySystemPointer, fmt::dynamic_format_arg_store<fmt::format_context>> ObjectCharacteristics;
+
 void gbuffer_object(cse::PlanetarySystemPointer& System);
 
 #endif
