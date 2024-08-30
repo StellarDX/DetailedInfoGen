@@ -25,4 +25,6 @@
 #include <fmt/args.h>
 #include <CSE/PlanSystem.h>
 
+void gbuffer_object_barycenter(cse::PlanetarySystemPointer& System);
+
 #endif

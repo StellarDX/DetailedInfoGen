@@ -31,6 +31,7 @@
 #include "Sources/composite.hxx"
 #include "Sources/final.hxx"
 #include "Sources/gbuffer_object.hxx"
+#include "Sources/gbuffer_object_barycenter.hxx"
 #include "Sources/gbuffer_system.hxx"
 
 #include "InfoGen.h"
@@ -132,16 +133,16 @@ _NOTE(R"((注:这里的"源
     ("epoch", value<float64>()->value_name("<JD>")
         ->default_value(GetJDFromSystem()), _TXT("轨道计算器的历元，默认为当前系统时间"))
     ("fix-orbit-plane,f", _TXT("修正轨道平面"))
-    ("show-variables", _TXT("显示变量"))
+    ("list-variables", _TXT("显示变量"))
     ("verbose,v", _TXT("显示日志"))
     ("help,h", _TXT("显示帮助"));
 }
 
 void InfoGenVariableList()
 {
-    cout << _TITLE("Variable List")
+    cout << _TITLE("Variable List\n")
+_NOTE(R"(  [Name]               [Range]         [Type]                [Note])")
 _TXT(R"(
-  [Name]               [Range]         [Type]                [Note]
   MainTitle            [Main]          (Raw string)          System name
   Content              [Main]          (Preprocessed string) Content
   General              [Main]          (Preprocessed string) System general information table
@@ -161,6 +162,22 @@ _TXT(R"(
   MinorPlanetCount     [General]       (Integer number)      Number of minor planets
   CometCount           [General]       (Integer number)      Number of comets
   CombinedSpectralType [General]       (Raw string)          Combined spectral type
+  MSC                  [Main]          (Preprocessed string) Multiple star table
+  MSCItems             [MSC]           (Preprocessed string) Items of MSC table
+  MSCPrimary           [MSCItems]      (Raw string)          System primary component
+  MSCSecondary         [MSCItems]      (Raw string)          System secondary component
+  MSCParent            [MSCItems]      (Raw string)          Parent body
+  MSCType              [MSCItems]      (Raw string)          Binary type
+  MSCPer               [MSCItems]      (Real number)         Period
+  MSCPerUnit           [MSCItems]      (Raw string)          Unit of period
+  MSCSep               [MSCItems]      (Real number)         Separation
+  MSCSepUnit           [MSCItems]      (Raw string)          Unit of separation
+  MSCSp1               [MSCItems]      (Raw string)          Primary spectral type
+  MSCSp2               [MSCItems]      (Raw string)          Secondary spectral type
+  MSCMass1             [MSCItems]      (Real number)         Primary mass
+  MSCMass2             [MSCItems]      (Real number)         Secondary mass
+
+Type "{Variable}" to insert variables into template files.
 )");
 }
 
@@ -437,7 +454,7 @@ IGEXPORT void IGCALL InfoGenMain(int argc, char const* const* argv)
         cout << Options << '\n';
         return;
     }
-    if (OptionsVariables.count("show-variables"))
+    if (OptionsVariables.count("list-variables"))
     {
         InfoGenVariableList();
         return;
@@ -455,6 +472,7 @@ IGEXPORT void IGCALL InfoGenMain(int argc, char const* const* argv)
 
     gbuffer_system(System);
     gbuffer_object(System);
+    gbuffer_object_barycenter(System);
     composite(System);
     final(System);
 

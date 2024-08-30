@@ -21,6 +21,7 @@
 
 #include "gbuffer_object.hxx"
 #include <CSE/Base.h>
+#include <CSE/Physics/Illuminants.h>
 #include <CSE/Physics/Orbit.h>
 
 #include "InfoGen.h"
@@ -29,6 +30,7 @@
 
 std::map<cse::PlanetarySystemPointer, cse::Orbit::OrbitStateType> Coordinates;
 
+std::vector<fmt::dynamic_format_arg_store<fmt::format_context>> MultipleStarCatalog;
 std::map<cse::PlanetarySystemPointer, fmt::dynamic_format_arg_store<fmt::format_context>> ObjectCharacteristics;
 
 bool IsMajorObject(cse::Object Obj)
@@ -100,6 +102,133 @@ bool IsBinaryObject(cse::Object::OrbitParams Orbit1, cse::Object::OrbitParams Or
     );
 }
 
+cse::float64 CalculateSeparation(cse::PlanetarySystemPointer& Primary, cse::PlanetarySystemPointer& Secondary)
+{
+    return cse::linalg::distance(Coordinates.at(Primary).Position, Coordinates.at(Secondary).Position);
+}
+
+std::string GenerateBinaryNature(cse::PlanetarySystemPointer& Parent, cse::PlanetarySystemPointer& Primary, cse::PlanetarySystemPointer& Secondary)
+{
+    // Reference: http://www.ctio.noirlab.edu/~atokovin/stars/index.html
+
+    if (Primary->PObject->Type == "Star" && Secondary->PObject->Type == "Star")
+    {
+        if (cse::abs(Primary->PObject->Orbit.Inclination - 90) < 10)
+        {
+            return "EB"; // eclipsing binary
+        }
+
+        if (CalculateSeparation(Primary, Secondary) < 70 *
+            cse::max(cse::ObjectLiterals::MeanRadius(*(Primary->PObject)),
+            cse::ObjectLiterals::MeanRadius(*(Secondary->PObject))))
+        {
+            if (cse::abs(cse::Illuminants::GetAbsMagnBolFromLumBol(Primary->PObject->LumBol) -
+                cse::Illuminants::GetAbsMagnBolFromLumBol(Secondary->PObject->LumBol)) > 6)
+            {
+                return "SB1"; // single-lined spectroscopic system
+            }
+            else {return "SB2";} // double-lined spectroscopic system
+        }
+    }
+
+    if (CalculateSeparation(Primary, Secondary) > 650 * AU)
+    {
+        return "C"; // C.P.M. system
+    }
+
+    else //if (CalculateSeparation(Primary, Secondary) > 200 * AU)
+    {
+        return "V"; // close visual or interferometric system
+    }
+}
+
+void AddMSC(cse::PlanetarySystemPointer& Parent, cse::PlanetarySystemPointer& Primary, cse::PlanetarySystemPointer& Secondary)
+{
+    MultipleStarCatalog.push_back(fmt::dynamic_format_arg_store<fmt::format_context>());
+
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCPrimary", Primary->PObject->Name[0].ToStdString()));
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCSecondary", Secondary->PObject->Name[0].ToStdString()));
+
+    std::string ParentName = Parent->PObject->Name[0];
+    if (Parent->PObject->Name[0] == Parent->PObject->ParentBody)
+    {
+        ParentName = "*";
+    }
+
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCParent", ParentName));
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCType", GenerateBinaryNature(Parent, Primary, Secondary)));
+
+    cse::float64 Period = Secondary->PObject->Orbit.Period;
+    std::string PeriodUnit = "s";
+    if (Period >= SynodicDay && Period < JulianYear)
+    {
+        Period /= SynodicDay;
+        PeriodUnit = "d";
+    }
+    else if (Period >= JulianYear && Period < JulianYear * 1E3)
+    {
+        Period /= JulianYear;
+        PeriodUnit = "y";
+    }
+    else if (Period >= JulianYear * 1E3 && Period < JulianYear * 1E6)
+    {
+        Period /= JulianYear * 1E3;
+        PeriodUnit = "K";
+    }
+    else if (Period >= JulianYear * 1E6 && Period < JulianYear * 1E9)
+    {
+        Period /= JulianYear * 1E6;
+        PeriodUnit = "M";
+    }
+    else if (Period >= JulianYear * 1E9)
+    {
+        Period /= JulianYear * 1E9;
+        PeriodUnit = "G";
+    }
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCPer", Period));
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCPerUnit", PeriodUnit));
+
+    cse::float64 Separation = CalculateSeparation(Primary, Secondary);
+    std::string SepUnit = "m";
+    if (Separation >= 1000 && Separation < SpeedOfLight)
+    {
+        Separation /= 1000;
+        SepUnit = "Km";
+    }
+    else if (Separation >= SpeedOfLight && Separation < SolarRadius)
+    {
+        Separation /= SpeedOfLight;
+        SepUnit = "lts";
+    }
+    else if (Separation >= SolarRadius && Separation < AU)
+    {
+        Separation /= SolarRadius;
+        SepUnit = "Rsun";
+    }
+    else if (Separation >= AU && Separation < AU * 1E3)
+    {
+        Separation /= AU;
+        SepUnit = "AU";
+    }
+    else if (Separation >= AU * 1E3 && Separation < AU * 1E6)
+    {
+        Separation /= AU * 1E3;
+        SepUnit = "K";
+    }
+    else if (Separation >= AU * 1E6)
+    {
+        Separation /= AU * 1E6;
+        SepUnit = "M";
+    }
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCSep", Separation));
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCSepUnit", SepUnit));
+
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCSp1", Primary->PObject->SpecClass.ToStdString()));
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCSp2", Secondary->PObject->SpecClass.ToStdString()));
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCMass1", Primary->PObject->Mass / SolarMass));
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCMass2", Secondary->PObject->Mass / SolarMass));
+}
+
 void TransferOrbitalElems(cse::PlanetarySystemPointer& System)
 {
     if (System->PObject->Type == "Barycenter")
@@ -137,7 +266,9 @@ void TransferOrbitalElems(cse::PlanetarySystemPointer& System)
 
             if (Primary->PObject->Type == "Star" || Primary->PObject->Type == "Barycenter")
             {
+                System->PObject->Class = "Sun";
                 Primary->PObject->Orbit = cse::Object::OrbitParams();
+                AddMSC(System, Primary, Companion);
             }
             else
             {
@@ -165,6 +296,61 @@ void TransferOrbitalElems(cse::PlanetarySystemPointer& System)
     }
 }
 
+void TransferBasicData(cse::PlanetarySystemPointer& System)
+{
+    for (auto i : System->PSubSystem)
+    {
+        TransferBasicData(i);
+    }
+
+    if (System->PObject->Type == "Barycenter" && System->PObject->Class == "Sun")
+    {
+        cse::PlanetarySystemPointer PrimaryPointer;
+        cse::float64 MaxVisualLuminosity = 0;
+        cse::float64 TotalLuminosity = 0;
+        cse::float64 TotalMass = 0;
+
+        for (auto i : System->PSubSystem)
+        {
+            if (i->PObject->Type == "Star" || (i->PObject->Type == "Barycenter" && System->PObject->Class == "Sun"))
+            {
+                if (i->PObject->Type == "Star" &&
+                    cse::Illuminants::IsStarRemnant(i->PObject->SpecClass) && !i->PObject->NoAccretionDisk)
+                {
+                    i->PObject->Luminosity += i->PObject->AccretionDisk.Luminosity;
+                    i->PObject->LumBol += i->PObject->AccretionDisk.LuminosityBol;
+                    i->PObject->Temperature = cse::max(i->PObject->Temperature, i->PObject->AccretionDisk.Temperature);
+                }
+
+                if (!IS_NO_DATA_DBL(i->PObject->LumBol)) {TotalLuminosity += i->PObject->LumBol;}
+                if (!IS_NO_DATA_DBL(i->PObject->Mass)) {TotalMass += i->PObject->Mass;}
+
+                if (i->PObject->LumBol > MaxVisualLuminosity)
+                {
+                    PrimaryPointer = i;
+                    MaxVisualLuminosity = i->PObject->LumBol;
+                }
+            }
+        }
+
+        if (IS_NO_DATA_DBL(System->PObject->LumBol))
+        {
+            System->PObject->LumBol = 0;
+        }
+        System->PObject->LumBol = TotalLuminosity;
+        System->PObject->Mass = TotalMass;
+
+        System->PObject->SpecClass = PrimaryPointer->PObject->SpecClass;
+
+        cse::CSESysDebug("gbuffer_object", cse::CSEDebugger::INFO,
+            fmt::format(R"(Transfered: "{}", Spectral type = {}, Mass = {}, Luminosity = {})",
+            System->PObject->Name[0].ToStdString(),
+            System->PObject->Mass,
+            System->PObject->SpecClass.ToStdString(),
+            System->PObject->LumBol));
+    }
+}
+
 void gbuffer_object(cse::PlanetarySystemPointer& System)
 {
     if (FixOrbitPlane)
@@ -172,6 +358,10 @@ void gbuffer_object(cse::PlanetarySystemPointer& System)
         FixEquatorRefPlane(System);
     }
     CalculatePosition(System);
+
+    cse::CSESysDebug("gbuffer_object", cse::CSEDebugger::INFO, "Transfering basic data...");
+    TransferBasicData(System);
+    cse::CSESysDebug("gbuffer_object", cse::CSEDebugger::INFO, "DONE.");
 
     cse::CSESysDebug("gbuffer_object", cse::CSEDebugger::INFO, "Transfering orbit data...");
     TransferOrbitalElems(System);

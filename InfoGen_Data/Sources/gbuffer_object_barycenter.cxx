@@ -18,3 +18,8 @@
  ****************************************************************************/
 
 #include "gbuffer_object_barycenter.hxx"
+
+void gbuffer_object_barycenter(cse::PlanetarySystemPointer& System)
+{
+
+}

@@ -20,6 +20,7 @@
 #include "final.hxx"
 #include "composite.hxx"
 #include "gbuffer_system.hxx"
+#include "gbuffer_object.hxx"
 
 #include "IGConf.h"
 
@@ -32,6 +33,8 @@ string ContentTitleFormatString;
 string ContentItemFormatString;
 string FullContentFormatString;
 string GeneralTableFormatString;
+string MSCFormatString;
+string MSCItemFormatString;
 
 void LoadContentFormatStrings()
 {
@@ -139,9 +142,32 @@ void CreateGeneralTable()
         fmt::vformat(GeneralTableFormatString, SystemBasicInfoValues)));
 }
 
+void CreateMultipleStarCatalog()
+{
+    cse::CSESysDebug("composite", cse::CSEDebugger::INFO, "Creating multiple star catalog...");
+
+    MSCFormatString = LoadTemplateProfile("MSC");
+    MSCItemFormatString = LoadTemplateProfile("MSCItem");
+
+    string MSCItems;
+    for (const auto& i : MultipleStarCatalog)
+    {
+        MSCItems += fmt::vformat(MSCItemFormatString, i);
+    }
+    auto Items = fmt::arg("MSCItems", MSCItems);
+    GeneralValues.push_back(fmt::arg("MSC",
+        fmt::vformat(MSCFormatString, fmt::make_format_args(Items))));
+}
+
 void composite(cse::PlanetarySystemPointer& System)
 {
     LoadContentFormatStrings();
     CreateContent();
     CreateGeneralTable();
+
+    if (PopulationStars.size() >= 3)
+    {
+        CreateMultipleStarCatalog();
+    }
+    else {GeneralValues.push_back(fmt::arg("MSC", ""));}
 }
