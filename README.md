@@ -2,7 +2,7 @@
 
 协议：[GPLv2](https://www.gnu.org/licenses/licenses.html)
 
-上一个详细信息生成器链接：[百度贴吧搬运链接，SE论坛的原链接不知去向](https://tieba.baidu.com/p/4458618242)
+上一个详细信息生成器链接：[百度贴吧搬运链接，SE论坛的原链接经检查已经无法访问](https://tieba.baidu.com/p/4458618242)
 
 详细信息生成器最初为SE官方论坛的用户Amwhere所作，这个工程为上述版本的C++重写，适配0.990以上版本，基于[CSpaceEngine](https://github.com/StellarDX/CSpaceEngine-Project)，
 默认输出格式为Github Markdown(.md)，~~因为作者不会网页前端，不过以后可能会支持~~ 现在已经支持HTML了。

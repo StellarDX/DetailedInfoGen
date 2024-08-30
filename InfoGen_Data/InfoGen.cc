@@ -62,6 +62,12 @@ map<ustring, ustring> StaticStrings
     {"ContentStar",        "Stars"},
     {"ContentPlanet",      "Planets"},
     {"ContentDwarfPlanet", "Known dwarf planets"},
+    {"CPMSystem",          "Common proper motion system"},
+    {"VisualSystem",       "Visual or interferometric system"},
+    {"AstrometricSystem",  "Astrometric system"},
+    {"SB1System",          "Single-lined spectroscopic system"},
+    {"SB2System",          "Double-lined spectroscopic system"},
+    {"EclipsingBinary",    "Eclipsing binary"},
 };
 
 LPCSTR Usage = _TITLE("Usage\n")
@@ -377,6 +383,7 @@ string LoadTemplateProfile(string Index)
     ifstream fin(canonical(TemplatePrefix + "/" + Path));
     stringstream Buf;
     Buf << fin.rdbuf();
+    fin.close();
     return Buf.str();
 }
 
