@@ -28,11 +28,12 @@
 #include <CSE/PlanSystem.h>
 #include <fmt/args.h>
 
-#include "Sources/composite.hxx"
-#include "Sources/final.hxx"
 #include "Sources/gbuffer_object.hxx"
 #include "Sources/gbuffer_object_barycenter.hxx"
 #include "Sources/gbuffer_system.hxx"
+#include "Sources/composite.hxx"
+#include "Sources/composite1.hxx"
+#include "Sources/final.hxx"
 
 #include "InfoGen.h"
 
@@ -59,15 +60,19 @@ float64               OrbitCalculatorEpoch;
 
 map<ustring, ustring> StaticStrings
 {
+    // Contents
     {"ContentStar",        "Stars"},
     {"ContentPlanet",      "Planets"},
     {"ContentDwarfPlanet", "Known dwarf planets"},
+
+    // Binary natures
     {"CPMSystem",          "Common proper motion system"},
     {"VisualSystem",       "Visual or interferometric system"},
     {"AstrometricSystem",  "Astrometric system"},
     {"SB1System",          "Single-lined spectroscopic system"},
     {"SB2System",          "Double-lined spectroscopic system"},
     {"EclipsingBinary",    "Eclipsing binary"},
+    {"OtherBarycenters",   "Double or multiple objects"},
 };
 
 LPCSTR Usage = _TITLE("Usage\n")
@@ -182,8 +187,23 @@ _TXT(R"(
   MSCSp2               [MSCItems]      (Raw string)          Secondary spectral type
   MSCMass1             [MSCItems]      (Real number)         Primary mass
   MSCMass2             [MSCItems]      (Real number)         Secondary mass
+  ObjectTables         [Main]          (Preprocessed string) Object tables
+  Name                 [Object]        (Raw string)          Object name
+  Type                 [Object]        (Raw string)          Object type
+  OrbitEpoch           [Object]        (Real number)         Epoch in JD
+  OrbitRefSystem       [Object]        (Raw string)          Orbit reference system
+  OrbitPrimary         [Object]        (Raw string)          Primary object, only used in star systems
+  OrbitCompanion       [Object]        (Raw string)          Companion object, only used in star systems
+  OrbitPeriod          [Object]        (Real number)         Orbital Period, default unit is seconds, Days and Years are also available.
+  OrbitSemiMajorAxis   [Object]        (Real number)         Orbital Semi-major axis, default unit is metres, Km and AU are also available.
+  OrbitEccentricity    [Object]        (Real number)         Orbital Eccentricity
+  OrbitInclination     [Object]        (Real number)         Orbital Inclination
+  OrbitAscendingNode   [Object]        (Real number)         Orbital AscendingNode
+  OrbitArgOfPericenter [Object]        (Real number)         Orbital ArgOfPericenter
+  OrbitMeanAnomaly     [Object]        (Real number)         Orbital MeanAnomaly
 
 Type "{Variable}" to insert variables into template files.
+Some of real-number type variables support different units, use "TypeUnit" to switch unit. For example, variable "OrbitPeriod"'s default unit is second, if you want to switch unit to days, type "OrbitPeriodDays".
 )");
 }
 
@@ -479,8 +499,8 @@ IGEXPORT void IGCALL InfoGenMain(int argc, char const* const* argv)
 
     gbuffer_system(System);
     gbuffer_object(System);
-    gbuffer_object_barycenter(System);
     composite(System);
+    composite1(System);
     final(System);
 
     auto TitleArg = fmt::arg("SystemName", System->PObject->Name[0].ToStdString());

@@ -20,6 +20,7 @@
 #define _USE_CSE_DEFINES
 
 #include "gbuffer_object.hxx"
+#include "gbuffer_object_barycenter.hxx"
 #include <CSE/Base.h>
 #include <CSE/Physics/Illuminants.h>
 #include <CSE/Physics/Orbit.h>
@@ -30,6 +31,7 @@
 
 std::map<cse::PlanetarySystemPointer, cse::Orbit::OrbitStateType> Coordinates;
 
+std::map<cse::PlanetarySystemPointer, std::string> BinaryNatures;
 std::vector<fmt::dynamic_format_arg_store<fmt::format_context>> MultipleStarCatalog;
 std::map<cse::PlanetarySystemPointer, fmt::dynamic_format_arg_store<fmt::format_context>> ObjectCharacteristics;
 
@@ -113,7 +115,7 @@ std::string GenerateBinaryNature(cse::PlanetarySystemPointer& Parent, cse::Plane
 
     if (Primary->PObject->Type == "Star" && Secondary->PObject->Type == "Star")
     {
-        if (cse::abs(Primary->PObject->Orbit.Inclination - 90) < 10)
+        if (cse::abs(Secondary->PObject->Orbit.Inclination - 90) < 10)
         {
             return "EB"; // eclipsing binary
         }
@@ -155,8 +157,10 @@ void AddMSC(cse::PlanetarySystemPointer& Parent, cse::PlanetarySystemPointer& Pr
         ParentName = "*";
     }
 
+    auto BinNature = GenerateBinaryNature(Parent, Primary, Secondary);
     MultipleStarCatalog.back().push_back(fmt::arg("MSCParent", ParentName));
-    MultipleStarCatalog.back().push_back(fmt::arg("MSCType", GenerateBinaryNature(Parent, Primary, Secondary)));
+    MultipleStarCatalog.back().push_back(fmt::arg("MSCType", BinNature));
+    BinaryNatures.insert({Parent, BinNature});
 
     cse::float64 Period = Secondary->PObject->Orbit.Period;
     std::string PeriodUnit = "s";
@@ -268,6 +272,7 @@ void TransferOrbitalElems(cse::PlanetarySystemPointer& System)
             {
                 System->PObject->Class = "Sun";
                 Primary->PObject->Orbit = cse::Object::OrbitParams();
+                Companion->PObject->ParentBody = Primary->PObject->Name[0];
                 AddMSC(System, Primary, Companion);
             }
             else
@@ -351,6 +356,19 @@ void TransferBasicData(cse::PlanetarySystemPointer& System)
     }
 }
 
+void __DFS_Iterate(cse::PlanetarySystemPointer& System)
+{
+    if (IsMajorObject(*System->PObject))
+    {
+        if (System->PObject->Type == "Barycenter")
+        {
+            gbuffer_object_barycenter(System);
+        }
+    }
+
+    for (auto& i : System->PSubSystem) {__DFS_Iterate(i);}
+}
+
 void gbuffer_object(cse::PlanetarySystemPointer& System)
 {
     if (FixOrbitPlane)
@@ -365,5 +383,9 @@ void gbuffer_object(cse::PlanetarySystemPointer& System)
 
     cse::CSESysDebug("gbuffer_object", cse::CSEDebugger::INFO, "Transfering orbit data...");
     TransferOrbitalElems(System);
+    cse::CSESysDebug("gbuffer_object", cse::CSEDebugger::INFO, "DONE.");
+
+    cse::CSESysDebug("gbuffer_object", cse::CSEDebugger::INFO, "Processing objects...");
+    __DFS_Iterate(System);
     cse::CSESysDebug("gbuffer_object", cse::CSEDebugger::INFO, "DONE.");
 }
