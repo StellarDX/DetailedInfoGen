@@ -73,6 +73,35 @@ map<ustring, ustring> StaticStrings
     {"SB2System",          "Double-lined spectroscopic system"},
     {"EclipsingBinary",    "Eclipsing binary"},
     {"OtherBarycenters",   "Double or multiple objects"},
+
+    // Stellar Classifications
+    {"OTypeStar",          "O-type main-sequence star"},
+    {"BTypeStar",          "B-type main-sequence star"},
+    {"ATypeStar",          "A-type main-sequence star"},
+    {"FTypeStar",          "F-type main-sequence star"},
+    {"GTypeStar",          "G-type main-sequence star"},
+    {"KTypeStar",          "K-type main-sequence star"},
+    {"MTypeStar",          "Red dwarf"},
+    {"OTypeSubdwarf",      "Subdwarf O star"},
+    {"BTypeSubdwarf",      "Subdwarf B star"},
+    {"Subdwarf",           "Subdwarf"},
+    {"WolfRayetStar",      "Wolf-Rayet star"},
+    {"Subgiant",           "Subgiant"},
+    {"BlueGiant",          "Blue giant"},
+    {"RedGiant",           "Red giant"},
+    {"YellowGiant",        "Yellow giant"},
+    {"BrightGiant",        "Bright giant"},
+    {"BSG",                "Blue supergiant"},
+    {"RSG",                "Red supergiant"},
+    {"YSG",                "Yellow supergiant"},
+    {"Hypergiant",         "Hypergiant"},
+    {"CarbonStar",         "Carbon star"},
+    {"STypeStar",          "S-type star"},
+    {"CNStar",             "CN star"},
+    {"CHStar",             "CH star"},
+    {"WhiteDwarf",         "White dwarf"},
+    {"NeutronStar",        "Pulsar"},
+    {"BlackHole",          "Black hole"},
 };
 
 LPCSTR Usage = _TITLE("Usage\n")
@@ -185,8 +214,8 @@ _TXT(R"(
   MSCSepUnit           [MSCItems]      (Raw string)          Unit of separation
   MSCSp1               [MSCItems]      (Raw string)          Primary spectral type
   MSCSp2               [MSCItems]      (Raw string)          Secondary spectral type
-  MSCMass1             [MSCItems]      (Real number)         Primary mass
-  MSCMass2             [MSCItems]      (Real number)         Secondary mass
+  MSCMass1             [MSCItems]      (Real number)         Primary mass in Solar mass
+  MSCMass2             [MSCItems]      (Real number)         Secondary mass in Solar mass
   ObjectTables         [Main]          (Preprocessed string) Object tables
   Name                 [Object]        (Raw string)          Object name
   Type                 [Object]        (Raw string)          Object type
@@ -201,6 +230,29 @@ _TXT(R"(
   OrbitAscendingNode   [Object]        (Real number)         Orbital AscendingNode
   OrbitArgOfPericenter [Object]        (Real number)         Orbital ArgOfPericenter
   OrbitMeanAnomaly     [Object]        (Real number)         Orbital MeanAnomaly
+  AbsMagn              [Star]          (Real number)         Absolute Bolometric Magnitude
+  SpecType             [Star]          (Raw string)          Stellar Classification
+  Metallicity          [Star]          (Real number)         Metallicity
+  Obliquity            [Object]        (Real number)         Rotational Obliquity
+  RotationPeriod       [Object]        (Real number)         Rotation Period, default unit is seconds, Hours and Days are also available.
+  RotationVelocity     [Object]        (Real number)         Rotational Velocity in m/s
+  EquatorialRadius     [Object]        (Real number)         Equatorial Radius, default unit is metres, Km, Earth, Jup and Sun are also available.
+  PolarRadius          [Object]        (Real number)         Polar Radius, default unit is metres, Km, Earth, Jup and Sun are also available.
+  MeanRadius           [Object]        (Real number)         Mean Radius, default unit is metres, Km, Earth, Jup and Sun are also available.
+  DimensionsX          [Object]        (Real number)         X-axis Dimension in metres
+  DimensionsY          [Object]        (Real number)         Y-axis Dimension in metres
+  DimensionsZ          [Object]        (Real number)         Z-axis Dimension in metres
+  Flattening           [Object]        (Real number)         Flattening
+  SurfaceArea          [Object]        (Real number)         Surface Area in m^2
+  Volume               [Object]        (Real number)         Volume in m^3
+  Mass                 [Object]        (Real number)         Mass, default unit is Kg, Earth, Jup and Sun are also available.
+  AverageDensity       [Object]        (Real number)         Average Density in Kg/m^3
+  Age                  [Object]        (Real number)         Age in years
+  SurfaceGravity       [Object]        (Real number)         Surface Gravity in m/s^2
+  EscapeVelocity       [Object]        (Real number)         Escape Velocity in m/s
+  Temperature          [Object]        (Real number)         Temperature, default unit is Kelvin, Celsius is also available.
+  Luminosity           [Object]        (Real number)         Visual Luminosity, default unit is Watts, Sun is also available.
+  LumBol               [Object]        (Real number)         Bolometric Luminosity, default unit is Watts, Sun is also available.
 
 Type "{Variable}" to insert variables into template files.
 Some of real-number type variables support different units, use "TypeUnit" to switch unit. For example, variable "OrbitPeriod"'s default unit is second, if you want to switch unit to days, type "OrbitPeriodDays".

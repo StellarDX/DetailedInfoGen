@@ -17,6 +17,7 @@
  *   along with this program; If not, see <https://www.gnu.org/licenses/>.  *
  ****************************************************************************/
 
+#include "CSE/Physics/Illuminants.h"
 #include "final.hxx"
 #include "composite1.hxx"
 #include "gbuffer_object.hxx"
@@ -24,6 +25,8 @@
 
 std::string BarycenterFormatString;
 std::string BarycenterBinaryFormatString;
+std::string StarFormatString;
+std::string StarBinaryFormatString;
 
 std::string ObjectTables;
 
@@ -33,6 +36,8 @@ void LoadObjectFormatStrings()
 
     BarycenterFormatString = LoadTemplateProfile("Barycenter");
     BarycenterBinaryFormatString = LoadTemplateProfile("MultipleSys");
+    StarFormatString = LoadTemplateProfile("Star");
+    StarBinaryFormatString = LoadTemplateProfile("MultiStar");
 
     cse::CSESysDebug("composite", cse::CSEDebugger::INFO, "DONE.");
 }
@@ -53,6 +58,21 @@ void __DFS_AddTable(cse::PlanetarySystemPointer& System)
             else
             {
                 ObjectTables.append(fmt::vformat(BarycenterFormatString, ObjectCharacteristics.at(System)));
+            }
+        }
+
+        if (System->PObject->Type == "Star")
+        {
+            if (!cse::Illuminants::IsBlackHole(System->PObject->SpecClass))
+            {
+                if (System->PObject->Orbit.Binary)
+                {
+                    ObjectTables.append(fmt::vformat(StarBinaryFormatString, ObjectCharacteristics.at(System)));
+                }
+                else
+                {
+                    ObjectTables.append(fmt::vformat(StarFormatString, ObjectCharacteristics.at(System)));
+                }
             }
         }
 

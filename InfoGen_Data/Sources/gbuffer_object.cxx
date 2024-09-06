@@ -21,6 +21,7 @@
 
 #include "gbuffer_object.hxx"
 #include "gbuffer_object_barycenter.hxx"
+#include "gbuffer_object_star.hxx"
 #include <CSE/Base.h>
 #include <CSE/Physics/Illuminants.h>
 #include <CSE/Physics/Orbit.h>
@@ -363,6 +364,10 @@ void __DFS_Iterate(cse::PlanetarySystemPointer& System)
         if (System->PObject->Type == "Barycenter")
         {
             gbuffer_object_barycenter(System);
+        }
+        else if (System->PObject->Type == "Star")
+        {
+            gbuffer_object_star(System);
         }
     }
 
