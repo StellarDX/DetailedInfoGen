@@ -185,10 +185,10 @@ void InfoGenOptionInit()
         _NOTE(R"((Note: The "source file" here refers to the complete system file exported by SE, the export method is select a system and go to it, then return to the main menu and select Tools -> Export System Script, the exported system is the complete system.))"))
     ("output,B", value<std::string>()->value_name("<path-to-output>"), _TXT("Specify output directory"))
     ("input-codepage", value<uint16_t>()->value_name("<encod>")
-        ->default_value(65001), _TXT("The encoding of the input file (code page), e.g. --input-codepage=65001 means using UTF-8 encoding."
+        ->default_value(65001), _TXT("The encoding of the input file (code page), e.g. --input-codepage=65001 means using UTF-8 encoding. "
         _WARN("This feature is only available on Windows.")))
     ("output-codepage", value<uint16_t>()->value_name("<encod>")
-        ->default_value(65001), _TXT("Encoding of the output file (code page)"
+        ->default_value(65001), _TXT("Encoding of the output file (code page). "
         _WARN("This feature is only available on Windows.")))
     ("mkdir", _TXT("Automatically creates the output directory if it doesn't exist"))
     ("seed", value<uint32_t>()->value_name("<seed>")
