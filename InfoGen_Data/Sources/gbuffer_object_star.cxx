@@ -158,6 +158,7 @@ void gbuffer_object_star(cse::PlanetarySystemPointer& System)
     ObjectCharacteristics.insert({System, fmt::dynamic_format_arg_store<fmt::format_context>()});
     ObjectCharacteristics.at(System).push_back(fmt::arg("Name", System->PObject->Name[0].ToStdString()));
     ObjectCharacteristics.at(System).push_back(fmt::arg("Type", GetStarType(System)));
+
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitEpoch", System->PObject->Orbit.Epoch));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitRefSystem", System->PObject->Orbit.RefPlane.ToStdString()));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPrimary", System->PObject->ParentBody.ToStdString()));
@@ -165,6 +166,12 @@ void gbuffer_object_star(cse::PlanetarySystemPointer& System)
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPeriod", System->PObject->Orbit.Period));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPeriodDays", System->PObject->Orbit.Period / SynodicDay));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPeriodYears", System->PObject->Orbit.Period / JulianYear));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAphelion", cse::ObjectLiterals::Aphelion(*System->PObject)));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAphelionKm", cse::ObjectLiterals::Aphelion(*System->PObject) / 1000.));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAphelionAU", cse::ObjectLiterals::Aphelion(*System->PObject) / AU));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPerihelion", cse::ObjectLiterals::Perihelion(*System->PObject)));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPerihelionKm", cse::ObjectLiterals::Perihelion(*System->PObject) / 1000.));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPerihelionAU", cse::ObjectLiterals::Perihelion(*System->PObject) / AU));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitSemiMajorAxis", cse::ObjectLiterals::SemiMajorAxis(*System->PObject)));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitSemiMajorAxisKm", cse::ObjectLiterals::SemiMajorAxis(*System->PObject) / 1000.));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitSemiMajorAxisAU", cse::ObjectLiterals::SemiMajorAxis(*System->PObject) / AU));
@@ -173,6 +180,7 @@ void gbuffer_object_star(cse::PlanetarySystemPointer& System)
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAscendingNode", System->PObject->Orbit.AscendingNode));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitArgOfPericenter", System->PObject->Orbit.ArgOfPericenter));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitMeanAnomaly", System->PObject->Orbit.MeanAnomaly));
+
     ObjectCharacteristics.at(System).push_back(fmt::arg("AbsMagn", cse::Illuminants::GetAbsMagnBolFromLumBol(System->PObject->LumBol)));
     ObjectCharacteristics.at(System).push_back(fmt::arg("SpecType", System->PObject->SpecClass.ToStdString()));
     ObjectCharacteristics.at(System).push_back(fmt::arg("Metallicity", System->PObject->FeH));
@@ -200,6 +208,8 @@ void gbuffer_object_star(cse::PlanetarySystemPointer& System)
     ObjectCharacteristics.at(System).push_back(fmt::arg("DimensionsY", System->PObject->Dimensions.y));
     ObjectCharacteristics.at(System).push_back(fmt::arg("DimensionsZ", System->PObject->Dimensions.z));
     ObjectCharacteristics.at(System).push_back(fmt::arg("Flattening", cse::ObjectLiterals::Flattening(*System->PObject).y));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("ECircumference", cse::ObjectLiterals::EquatorialCircumference(*System->PObject)));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("MCircumference", cse::ObjectLiterals::MeridionalCircumference(*System->PObject)));
     ObjectCharacteristics.at(System).push_back(fmt::arg("SurfaceArea", cse::ObjectLiterals::SurfaceArea(*System->PObject)));
     ObjectCharacteristics.at(System).push_back(fmt::arg("Volume", cse::ObjectLiterals::Volume(*System->PObject)));
     ObjectCharacteristics.at(System).push_back(fmt::arg("Mass", System->PObject->Mass));

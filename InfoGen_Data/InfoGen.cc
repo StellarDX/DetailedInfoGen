@@ -102,6 +102,34 @@ map<ustring, ustring> StaticStrings
     {"WhiteDwarf",         "White dwarf"},
     {"NeutronStar",        "Pulsar"},
     {"BlackHole",          "Black hole"},
+
+    // Planetary Classifications
+    {"SuperJupiter",       "Super-Jupiter"},      // An astronomical object more massive than the planet Jupiter.
+    {"GasGiant",           "Gas giant"},          // A massive planet composed primarily of hydrogen and helium.
+    {"SuperNeptune",       "Super-Neptune"},      // A planet that is more massive than the planet Neptune. These planets are generally described as being around 5–7 times as large as Earth with estimated masses of 20–80 ME
+    {"IceGiant",           "Ice giant"},          // A giant planet composed mainly of 'ices'—volatile substances heavier than hydrogen and helium, such as water, methane, and ammonia—as opposed to 'gas' (hydrogen and helium).
+    {"SubNeptune",         "Sub-Neptune"},        // a planet with smaller radius than Neptune even though it may have a larger mass
+    {"MiniNeptune",        "Gas dwarf"},          // A low-mass planet composed primarily of hydrogen and helium.
+    {"MegaEarth",          "Mega-Earth"},         // Proposed neologism for a massive terrestrial exoplanet that is at least ten times the mass of Earth
+    {"SuperEarth",         "Super-Earth"},        // An extrasolar planet with a mass higher than Earth's, but substantially below the mass of the Solar System's smaller gas giants Uranus and Neptune, which are 14.5 and 17.1 Earth masses respectively.
+    {"SubEarth",           "Sub-Earth"},          // A classification of planets "substantially less massive" than Earth and Venus.
+    {"EccentricJupiter",   "Eccentric Jupiter"},  // A gas giant that orbits its star in an eccentric orbit.
+    {"HotJupiter",         "Hot Jupiter"},        // A class of extrasolar planets whose characteristics are similar to Jupiter, but that have high surface temperatures because they orbit very close—between approximately 0.015 and 0.5 AU (2.2×106 and 74.8×106 km)—to their parent stars, whereas Jupiter orbits its parent star (the Sun) at 5.2 AU (780×106 km), causing low surface temperatures.
+    {"HotNeptune",         "Hoptune"},            // An extrasolar planet in an orbit close to its star (normally less than one astronomical unit away), with a mass similar to that of Uranus or Neptune.
+    {"Carbonia",           "Carbon planet"},      // A theoretical terrestrial planet that composed primarily of graphite, diamond or moissanite could form if protoplanetary discs are carbon-rich and oxygen-poor.
+    {"Chthonia",           "Helium planet"},      // A theoretical planet that may form via mass loss from a low-mass white dwarf. Helium planets are predicted to have roughly the same diameter as hydrogen–helium planets of the same mass.
+    {"Hycean",             "Hycean planet"},      // A hypothetical type of habitable planet described as a hot, water-covered planet with a hydrogen-rich atmosphere.
+    {"IceWorld",           "Ice planet"},         // A theoretical planet with an icy surface and consists of a global cryosphere.
+    {"Ferria",             "Iron planet"},        // A theoretical planet that consists primarily of an iron-rich core with little or no mantle.
+    {"LavaPlanet",         "Lava planet"},        // A theoretical terrestrial planet with a surface mostly or entirely covered by molten lava.
+    {"Oceania",            "Ocean planet"},       // A theoretical planet which has a substantial fraction of its mass made of water.
+    {"SilicatePlanet",     "Silicate planet"},    // A terrestrial planet that is composed primarily of silicate rocks. All four inner planets in the Solar System are silicon-based.
+    {"Terra",              "Terrestrial planet"}, // Also known as a telluric planet or rocky planet. A planet that is composed primarily of carbonaceous or silicate rocks or metals.
+    {"GasGiantClassI",     "Class I: Ammonia clouds"},
+    {"GasGiantClassII",    "Class II: Water clouds"},
+    {"GasGiantClassIII",   "Class III: Cloudless"},
+    {"GasGiantClassIV",    "Class IV: Alkali metals"},
+    {"GasGiantClassV",     "Class V: Silicate clouds"},
 };
 
 LPCSTR Usage = _TITLE("Usage\n")
@@ -173,6 +201,8 @@ _NOTE(R"((注:这里的"源
     ("epoch", value<float64>()->value_name("<JD>")
         ->default_value(GetJDFromSystem()), _TXT("轨道计算器的历元，默认为当前系统时间"))
     ("fix-orbit-plane,f", _TXT("修正轨道平面"))
+    ("generator,G", value<std::string>()->value_name("<generator>")
+        ->default_value("Markdown"), _TXT("选择模板，默认是Markdown"))
     ("list-variables", _TXT("显示变量"))
     ("verbose,v", _TXT("显示日志"))
     ("help,h", _TXT("显示帮助"));
@@ -224,6 +254,8 @@ _TXT(R"(
   OrbitPrimary         [Object]        (Raw string)          Primary object, only used in star systems
   OrbitCompanion       [Object]        (Raw string)          Companion object, only used in star systems
   OrbitPeriod          [Object]        (Real number)         Orbital Period, default unit is seconds, Days and Years are also available.
+  OrbitAphelion        [Object]        (Real number)         Aphelion, default unit is metres, Km and AU are also available.
+  OrbitPerihelion      [Object]        (Real number)         Perihelion, default unit is metres, Km and AU are also available.
   OrbitSemiMajorAxis   [Object]        (Real number)         Orbital Semi-major axis, default unit is metres, Km and AU are also available.
   OrbitEccentricity    [Object]        (Real number)         Orbital Eccentricity
   OrbitInclination     [Object]        (Real number)         Orbital Inclination
@@ -234,7 +266,7 @@ _TXT(R"(
   SpecType             [Star]          (Raw string)          Stellar Classification
   Metallicity          [Star]          (Real number)         Metallicity
   Obliquity            [Object]        (Real number)         Rotational Obliquity
-  RotationPeriod       [Object]        (Real number)         Rotation Period, default unit is seconds, Hours and Days are also available.
+  RotationPeriod       [Object]        (Real number)         Sidereal Rotation Period, default unit is seconds, Hours and Days are also available.
   RotationVelocity     [Object]        (Real number)         Rotational Velocity in m/s
   EquatorialRadius     [Object]        (Real number)         Equatorial Radius, default unit is metres, Km, Earth, Jup and Sun are also available.
   PolarRadius          [Object]        (Real number)         Polar Radius, default unit is metres, Km, Earth, Jup and Sun are also available.
@@ -243,6 +275,8 @@ _TXT(R"(
   DimensionsY          [Object]        (Real number)         Y-axis Dimension in metres
   DimensionsZ          [Object]        (Real number)         Z-axis Dimension in metres
   Flattening           [Object]        (Real number)         Flattening
+  ECircumference       [Object]        (Real number)         Equatorial Circumference
+  MCircumference       [Object]        (Real number)         Meridional Circumference
   SurfaceArea          [Object]        (Real number)         Surface Area in m^2
   Volume               [Object]        (Real number)         Volume in m^3
   Mass                 [Object]        (Real number)         Mass, default unit is Kg, Earth, Jup and Sun are also available.
@@ -250,9 +284,16 @@ _TXT(R"(
   Age                  [Object]        (Real number)         Age in years
   SurfaceGravity       [Object]        (Real number)         Surface Gravity in m/s^2
   EscapeVelocity       [Object]        (Real number)         Escape Velocity in m/s
+  SynRotationPeriod    [Planet]        (Real number)         Synodic Rotation Period, default unit is seconds, Hours and Days are also available.
+  AlbedoBond           [Planet]        (Real number)         Bond Albedo
+  AlbedoGeom           [Planet]        (Real number)         Geometric Albedo
   Temperature          [Object]        (Real number)         Temperature, default unit is Kelvin, Celsius is also available.
-  Luminosity           [Object]        (Real number)         Visual Luminosity, default unit is Watts, Sun is also available.
-  LumBol               [Object]        (Real number)         Bolometric Luminosity, default unit is Watts, Sun is also available.
+  Luminosity           [Star]          (Real number)         Visual Luminosity, default unit is Watts, Sun is also available.
+  LumBol               [Star]          (Real number)         Bolometric Luminosity, default unit is Watts, Sun is also available.
+  SatelliteTable       [Planet]        (Preprocessed string) Satellite table
+  SatelliteTableItems  [SateTable]     (Preprocessed string) Satellite table items
+  SatellitePageSize    [SateTable]     (Integer number)      Satellite table page size
+  SatelliteTotalPages  [SateTable]     (Integer number)      Satellite table total pages
 
 Type "{Variable}" to insert variables into template files.
 Some of real-number type variables support different units, use "TypeUnit" to switch unit. For example, variable "OrbitPeriod"'s default unit is second, if you want to switch unit to days, type "OrbitPeriodDays".
@@ -380,6 +421,11 @@ void InfoGenOptionLoad()
     if (OptionsVariables.count("fix-orbit-plane"))
     {
         FixOrbitPlane = 1;
+    }
+
+    if (OptionsVariables.count("generator"))
+    {
+        Template = OptionsVariables.at("generator").as<std::string>();
     }
 }
 

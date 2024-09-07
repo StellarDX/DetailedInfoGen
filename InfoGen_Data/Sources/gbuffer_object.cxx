@@ -22,6 +22,7 @@
 #include "gbuffer_object.hxx"
 #include "gbuffer_object_barycenter.hxx"
 #include "gbuffer_object_star.hxx"
+#include "gbuffer_object_planet.hxx"
 #include <CSE/Base.h>
 #include <CSE/Physics/Illuminants.h>
 #include <CSE/Physics/Orbit.h>
@@ -351,8 +352,8 @@ void TransferBasicData(cse::PlanetarySystemPointer& System)
         cse::CSESysDebug("gbuffer_object", cse::CSEDebugger::INFO,
             fmt::format(R"(Transfered: "{}", Spectral type = {}, Mass = {}, Luminosity = {})",
             System->PObject->Name[0].ToStdString(),
-            System->PObject->Mass,
             System->PObject->SpecClass.ToStdString(),
+            System->PObject->Mass,
             System->PObject->LumBol));
     }
 }
@@ -368,6 +369,10 @@ void __DFS_Iterate(cse::PlanetarySystemPointer& System)
         else if (System->PObject->Type == "Star")
         {
             gbuffer_object_star(System);
+        }
+        else if (System->PObject->Type == "Planet")
+        {
+            gbuffer_object_planet(System);
         }
     }
 
