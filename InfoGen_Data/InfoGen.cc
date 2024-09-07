@@ -181,31 +181,26 @@ void InfoGenOptionInit()
 {
     // 只能说Boost那个中文支持简直史一样
     Options.add_options()
-    ("input,S", value<std::string>()->value_name("<source-file>"), _TXT("指定输入的源文件 ")
-_NOTE(R"((注:这里的"源
-文件"指SE导出的完整系统
-文件，导出方法是先选中一
-个系统并前往，返回主菜单
-选择工具->导出系统脚本，
-导出系统即为完整系统。))"))
-    ("output,B", value<std::string>()->value_name("<path-to-output>"), _TXT("指定输出目录"))
+    ("input,S", value<std::string>()->value_name("<source-file>"), _TXT("Specify input file")
+        _NOTE(R"((Note: The "source file" here refers to the complete system file exported by SE, the export method is select a system and go to it, then return to the main menu and select Tools -> Export System Script, the exported system is the complete system.))"))
+    ("output,B", value<std::string>()->value_name("<path-to-output>"), _TXT("Specify output directory"))
     ("input-codepage", value<uint16_t>()->value_name("<encod>")
-        ->default_value(65001), _TXT("输入文件的编码\n(代码页)，如UTF-8就写\n--input-codepage=65001，\n"
-        _WARN("此功能仅Windows下\n可用")))
+        ->default_value(65001), _TXT("The encoding of the input file (code page), e.g. --input-codepage=65001 means using UTF-8 encoding."
+        _WARN("This feature is only available on Windows.")))
     ("output-codepage", value<uint16_t>()->value_name("<encod>")
-        ->default_value(65001), _TXT("输出文件的编码\n(代码页)"
-        _WARN("此功能仅Windows下可用")))
-    ("mkdir", _TXT("如果输出目录不存在就自动创建"))
+        ->default_value(65001), _TXT("Encoding of the output file (code page)"
+        _WARN("This feature is only available on Windows.")))
+    ("mkdir", _TXT("Automatically creates the output directory if it doesn't exist"))
     ("seed", value<uint32_t>()->value_name("<seed>")
-        ->default_value(random_device()()), _TXT("随机数生成器的种子，如果不指定则随机生成，范围是0-4294967295"))
+        ->default_value(random_device()()), _TXT("Seed of random number generator, randomly generated if not specified, ranging in 0-4294967295"))
     ("epoch", value<float64>()->value_name("<JD>")
-        ->default_value(GetJDFromSystem()), _TXT("轨道计算器的历元，默认为当前系统时间"))
-    ("fix-orbit-plane,f", _TXT("修正轨道平面"))
+        ->default_value(GetJDFromSystem()), _TXT("Epoch of the orbit tracker, defaults value is current system time"))
+    ("fix-orbit-plane,f", _TXT("Correction of orbital plane, " _WARN("TODO")))
     ("generator,G", value<std::string>()->value_name("<generator>")
-        ->default_value("Markdown"), _TXT("选择模板，默认是Markdown"))
-    ("list-variables", _TXT("显示变量"))
-    ("verbose,v", _TXT("显示日志"))
-    ("help,h", _TXT("显示帮助"));
+        ->default_value("Markdown"), _TXT("Specify generator, default is Markdown"))
+    ("list-variables", _TXT("Show variables"))
+    ("verbose,v", _TXT("Show log"))
+    ("help,h", _TXT("Show this page"));
 }
 
 void InfoGenVariableList()
