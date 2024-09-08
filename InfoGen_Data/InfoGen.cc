@@ -28,8 +28,8 @@
 #include <CSE/PlanSystem.h>
 #include <fmt/args.h>
 
+#include "Sources/gbuffer_atmosphere.hxx"
 #include "Sources/gbuffer_object.hxx"
-#include "Sources/gbuffer_object_barycenter.hxx"
 #include "Sources/gbuffer_system.hxx"
 #include "Sources/composite.hxx"
 #include "Sources/composite1.hxx"
@@ -287,6 +287,11 @@ _TXT(R"(
   Temperature          [Object]        (Real number)         Temperature, default unit is Kelvin, Celsius is also available.
   Luminosity           [Star]          (Real number)         Visual Luminosity, default unit is Watts, Sun is also available.
   LumBol               [Star]          (Real number)         Bolometric Luminosity, default unit is Watts, Sun is also available.
+  Atmosphere           [Planet]        (Preprocessed string) Atmosphere data
+  AtmoPressure         [Atmosphere]    (Real number)         Atmosphere pressure, default unit is Pa, Kpa, Hpa, Bar and Atm are also available
+  AtmoCompositions     [Atmosphere]    (Preprocessed string) Atmosphere compositions
+  CompName             [Compositions]  (Raw string)          Composition Name
+  CompValue            [Compositions]  (Real number)         Composition volume fraction in percent
   SatelliteTable       [Planet]        (Preprocessed string) Satellite table
   SatelliteTableItems  [SateTable]     (Preprocessed string) Satellite table items
   SatellitePageSize    [SateTable]     (Integer number)      Satellite table page size
@@ -487,7 +492,7 @@ void LoadTemplate()
         LoadStaticStrings(StaticStringTable->SubTable);
     }
 
-    auto CustomGenerator = __scstream_table_helpers::__Find_Table_From_List(TemplateConfigTable, L"CustomGenerator");
+    /*auto CustomGenerator = __scstream_table_helpers::__Find_Table_From_List(TemplateConfigTable, L"CustomGenerator");
     if (CustomGenerator != TemplateConfigTable->Get().end())
     {
         ustring Value;
@@ -503,7 +508,7 @@ void LoadTemplate()
                 fmt::format(_FATAL("{}"), e.what()));
             throw runtime_error(e.what());
         }
-    }
+    }*/
 
     CSESysDebug("InfoGen", CSEDebugger::INFO, "DONE.");
 }
@@ -570,6 +575,7 @@ void DefaultGeneratorMain(PlanetarySystemPointer& System)
 {
     gbuffer_system(System);
     gbuffer_object(System);
+    gbuffer_atmosphere(System);
     composite(System);
     composite1(System);
     final(System);
@@ -621,18 +627,18 @@ IGEXPORT void IGCALL InfoGenMain(int argc, char const* const* argv)
 
     PlanetarySystemPointer System = LoadSystem(InputFile);
 
-    if (ExternalGenerator)
+    /*if (ExternalGenerator)
     {
         GeneratorMain = decltype(GeneratorMain)(GetProcAddress(ExternalGenerator, TEXT("GenMain")));
     }
-    else {GeneratorMain = DefaultGeneratorMain;}
+    else {GeneratorMain = DefaultGeneratorMain;}*/
 
     GeneratorMain(System);
 
-    if (ExternalGenerator)
+    /*if (ExternalGenerator)
     {
         FreeLibrary(ExternalGenerator);
-    }
+    }*/
 
     auto TitleArg = fmt::arg("SystemName", System->PObject->Name[0].ToStdString());
     Target = fmt::vformat(Target.string(), fmt::make_format_args(TitleArg));

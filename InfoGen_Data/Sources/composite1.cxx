@@ -20,6 +20,7 @@
 #include "CSE/Physics/Illuminants.h"
 #include "final.hxx"
 #include "composite1.hxx"
+#include "gbuffer_atmosphere.hxx"
 #include "gbuffer_object.hxx"
 #include "IGConf.h"
 
@@ -29,6 +30,9 @@ std::string StarFormatString;
 std::string StarBinaryFormatString;
 std::string PlanetFormatString;
 std::string PlanetBinaryFormatString;
+
+std::string AtmosphereFormatString;
+std::string AtmoCompFormatString;
 
 std::string ObjectTables;
 
@@ -42,8 +46,34 @@ void LoadObjectFormatStrings()
     StarBinaryFormatString = LoadTemplateProfile("MultiStar");
     PlanetFormatString = LoadTemplateProfile("Planet");
     PlanetBinaryFormatString = LoadTemplateProfile("MultiPlanet");
+    AtmosphereFormatString = LoadTemplateProfile("Atmosphere");
+    AtmoCompFormatString = LoadTemplateProfile("AtmoComp");
 
     cse::CSESysDebug("composite", cse::CSEDebugger::INFO, "DONE.");
+}
+
+void CreateAtmosphereData(cse::PlanetarySystemPointer& System)
+{
+    if (AtmoData.contains(System))
+    {
+        cse::CSESysDebug("composite1", cse::CSEDebugger::INFO,
+            fmt::format("Creating atmosphere data for {}", System->PObject->Name[0].ToStdString()));
+        std::string AtmoCompositions;
+        for (auto i : System->PObject->Atmosphere.Composition)
+        {
+            auto CompName = fmt::arg("CompName", i.first.ToStdString());
+            auto CompVal = fmt::arg("CompValue", i.second);
+            AtmoCompositions += fmt::vformat(AtmoCompFormatString,
+                fmt::make_format_args(CompName, CompVal));
+        }
+        AtmoData.at(System).push_back(fmt::arg("AtmoCompositions", AtmoCompositions));
+        ObjectCharacteristics.at(System).push_back(fmt::arg("Atmosphere",
+            fmt::vformat(AtmosphereFormatString, AtmoData.at(System))));
+    }
+    else
+    {
+        ObjectCharacteristics.at(System).push_back(fmt::arg("Atmosphere", ""));
+    }
 }
 
 void __DFS_AddTable(cse::PlanetarySystemPointer& System)
@@ -82,6 +112,7 @@ void __DFS_AddTable(cse::PlanetarySystemPointer& System)
 
         if (System->PObject->Type == "Planet")
         {
+            CreateAtmosphereData(System);
             if (System->PObject->Orbit.Binary)
             {
                 ObjectTables.append(fmt::vformat(PlanetBinaryFormatString, ObjectCharacteristics.at(System)));

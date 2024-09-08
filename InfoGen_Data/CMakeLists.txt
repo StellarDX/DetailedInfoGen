@@ -10,6 +10,8 @@ SET_TARGET_PROPERTIES(${MAIN_PROGRAM_NAME}Lib PROPERTIES
     SUFFIX ".so"
 )
 
+set(InstallSource false CACHE BOOL "Install sources, can be used for developing generators and plug-ins")
+
 target_include_directories(${MAIN_PROGRAM_NAME}Lib PRIVATE ${CSE_INCLUDE_DIRS} ${FMT_HEADERS_DIR} Headers Headers/InfoGen)
 target_link_directories(${MAIN_PROGRAM_NAME}Lib PRIVATE ${CSE_LIBRARY_DIRS} ${FMT_LIBRARY_DIR})
 target_link_libraries(${MAIN_PROGRAM_NAME}Lib PRIVATE
@@ -21,6 +23,12 @@ install(
     DESTINATION ${CMAKE_INSTALL_PREFIX}/InfoGen_Data/
     FILES_MATCHING PATTERN "*.h"
 )
+if(InstallSource)
+    install(
+        DIRECTORY "${CMAKE_SOURCE_DIR}/InfoGen_Data/Sources"
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/InfoGen_Data/
+    )
+endif()
 install(
     DIRECTORY "${CMAKE_SOURCE_DIR}/InfoGen_Data/WebResources"
     DESTINATION ${CMAKE_INSTALL_PREFIX}/InfoGen_Data/
