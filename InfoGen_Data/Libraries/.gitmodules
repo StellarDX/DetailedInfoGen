@@ -1,14 +1,12 @@
 [submodule "Boost-Library"]
-        path = Boost
+        path = InfoGen_Data/Libraries/Boost
         url = https://github.com/boostorg/boost
         branch = master
-
 [submodule "Fmtlib"]
-        path = Fmt
+        path = InfoGen_Data/Libraries/Fmt
         url = https://github.com/fmtlib/fmt
         branch = master
-
 [submodule "CSpaceEngine"]
-        path = CSE
+        path = InfoGen_Data/Libraries/CSE
         url = https://github.com/StellarDX/CSpaceEngine-Project
         branch = main
