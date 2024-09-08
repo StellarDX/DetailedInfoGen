@@ -1,0 +1,14 @@
+[submodule "Boost-Library"]
+        path = Boost
+        url = https://github.com/boostorg/boost
+        branch = master
+
+[submodule "Fmtlib"]
+        path = Fmt
+        url = https://github.com/fmtlib/fmt
+        branch = master
+
+[submodule "CSpaceEngine"]
+        path = CSE
+        url = https://github.com/StellarDX/CSpaceEngine-Project
+        branch = main

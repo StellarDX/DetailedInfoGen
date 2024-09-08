@@ -284,17 +284,11 @@ void TransferOrbitalElems(cse::PlanetarySystemPointer& System)
                 System->PObject->Orbit = cse::Object::OrbitParams();
             }
         }
+    }
 
-        if (Primary->PObject->Rotation.TidalLocked && IS_NO_DATA_DBL(Primary->PObject->Rotation.RotationPeriod))
-        {
-            Primary->PObject->Rotation.RotationPeriod = Companion->PObject->Orbit.Period;
-            Primary->PObject->Rotation.TidalLocked = false;
-        }
-
-        if (Companion->PObject->Rotation.TidalLocked && IS_NO_DATA_DBL(Companion->PObject->Rotation.RotationPeriod))
-        {
-            Companion->PObject->Rotation.RotationPeriod = Companion->PObject->Orbit.Period;
-        }
+    if (System->PObject->Rotation.TidalLocked && IS_NO_DATA_DBL(System->PObject->Rotation.RotationPeriod))
+    {
+        System->PObject->Rotation.RotationPeriod = System->PObject->Orbit.Period;
     }
 
     for (auto i : System->PSubSystem)

@@ -25,14 +25,6 @@
 
 std::string GetStarType(cse::PlanetarySystemPointer& System)
 {
-    if (System->PObject->SpecClass == "Q")
-    {
-        return StaticStrings.at("NeutronStar").ToStdString();
-    }
-    if (System->PObject->SpecClass == "X")
-    {
-        return StaticStrings.at("BlackHole").ToStdString();
-    }
     cse::Illuminants::StellarClassification Classification(System->PObject->SpecClass);
     if (cse::Illuminants::IsMainSequence(Classification))
     {
@@ -85,7 +77,7 @@ std::string GetStarType(cse::PlanetarySystemPointer& System)
     {
         return StaticStrings.at("Subgiant").ToStdString();
     }
-    if (cse::Illuminants::IsGiant(Classification))
+    if (cse::Illuminants::IsNormalGiant(Classification))
     {
         if (cse::Illuminants::IsOType(Classification) ||
             cse::Illuminants::IsBType(Classification))
@@ -151,6 +143,19 @@ std::string GetStarType(cse::PlanetarySystemPointer& System)
     {
         return StaticStrings.at("WhiteDwarf").ToStdString();
     }
+    if (cse::Illuminants::IsNeutronStar(Classification))
+    {
+        return StaticStrings.at("NeutronStar").ToStdString();
+    }
+    if (cse::Illuminants::IsBlackHole(Classification))
+    {
+        return StaticStrings.at("BlackHole").ToStdString();
+    }
+    if (cse::Illuminants::IsBrownDwarf(Classification))
+    {
+        return StaticStrings.at("Substellar").ToStdString();
+    }
+    return "Star";
 }
 
 void gbuffer_object_star(cse::PlanetarySystemPointer& System)

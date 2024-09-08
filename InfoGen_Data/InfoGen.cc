@@ -102,6 +102,7 @@ map<ustring, ustring> StaticStrings
     {"WhiteDwarf",         "White dwarf"},
     {"NeutronStar",        "Pulsar"},
     {"BlackHole",          "Black hole"},
+    {"Substellar",         "Substellar Object"},
 
     // Planetary Classifications
     {"SuperJupiter",       "Super-Jupiter"},      // An astronomical object more massive than the planet Jupiter.
