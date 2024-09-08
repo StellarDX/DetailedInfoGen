@@ -26,7 +26,7 @@ cmake --build <中间目录> --target all install
 1. 打开SE，选中目标系统
 2. 返回主菜单，点开工具->导出星球脚本，导出行星系统
 3. 在导出的目录(通常是SE目录/export)下找到导出的系统文件
-4. 转到生成器的目录，直接把文件拖入主程序。或者用命令行打开该目录，输入以下命令(两种都可以)：
+4. 转到生成器的目录，用命令行打开该目录，输入以下命令(两种都可以)：
 ```
 InfoGen [options] <source-file>
 InfoGen [options] -S <source-file> -B <path-to-output>

@@ -54,6 +54,7 @@ path                  Template = "Markdown";
 map<ustring, path>    OutputTemplates;
 path                  TemplatePrefix;
 vector<path>          InstallDirectories;
+HMODULE               ExternalGenerator = nullptr;
 
 path                  Target;
 float64               OrbitCalculatorEpoch;
@@ -486,6 +487,24 @@ void LoadTemplate()
         LoadStaticStrings(StaticStringTable->SubTable);
     }
 
+    auto CustomGenerator = __scstream_table_helpers::__Find_Table_From_List(TemplateConfigTable, L"CustomGenerator");
+    if (CustomGenerator != TemplateConfigTable->Get().end())
+    {
+        ustring Value;
+        CustomGenerator->Value.front().GetQualified(&Value);
+        try
+        {
+            path SOPath = canonical(TemplatePrefix + "/" + Value.ToStdString());
+            ExternalGenerator = LoadLibrary(SOPath.string().c_str());
+        }
+        catch (const exception& e)
+        {
+            CSESysDebug("SCStream", CSEDebugger::FATAL,
+                fmt::format(_FATAL("{}"), e.what()));
+            throw runtime_error(e.what());
+        }
+    }
+
     CSESysDebug("InfoGen", CSEDebugger::INFO, "DONE.");
 }
 
@@ -547,6 +566,17 @@ void InstallTarget()
 _EXTERN_C
 #endif
 
+void DefaultGeneratorMain(PlanetarySystemPointer& System)
+{
+    gbuffer_system(System);
+    gbuffer_object(System);
+    composite(System);
+    composite1(System);
+    final(System);
+}
+
+void (*GeneratorMain)(cse::PlanetarySystemPointer& System) = DefaultGeneratorMain;
+
 #define _MAIN_FUNC_BEGIN try {
 #define _MAIN_FUNC_END } catch (const exception& e) \
 {\
@@ -591,11 +621,18 @@ IGEXPORT void IGCALL InfoGenMain(int argc, char const* const* argv)
 
     PlanetarySystemPointer System = LoadSystem(InputFile);
 
-    gbuffer_system(System);
-    gbuffer_object(System);
-    composite(System);
-    composite1(System);
-    final(System);
+    if (ExternalGenerator)
+    {
+        GeneratorMain = decltype(GeneratorMain)(GetProcAddress(ExternalGenerator, TEXT("GenMain")));
+    }
+    else {GeneratorMain = DefaultGeneratorMain;}
+
+    GeneratorMain(System);
+
+    if (ExternalGenerator)
+    {
+        FreeLibrary(ExternalGenerator);
+    }
 
     auto TitleArg = fmt::arg("SystemName", System->PObject->Name[0].ToStdString());
     Target = fmt::vformat(Target.string(), fmt::make_format_args(TitleArg));
