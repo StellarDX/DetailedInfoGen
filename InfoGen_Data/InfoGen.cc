@@ -30,6 +30,7 @@
 
 #include "Sources/gbuffer_atmosphere.hxx"
 #include "Sources/gbuffer_object.hxx"
+#include "Sources/gbuffer_ocean.hxx"
 #include "Sources/gbuffer_system.hxx"
 #include "Sources/composite.hxx"
 #include "Sources/composite1.hxx"
@@ -290,6 +291,9 @@ _TXT(R"(
   Atmosphere           [Planet]        (Preprocessed string) Atmosphere data
   AtmoPressure         [Atmosphere]    (Real number)         Atmosphere pressure, default unit is Pa, Kpa, Hpa, Bar and Atm are also available
   AtmoCompositions     [Atmosphere]    (Preprocessed string) Atmosphere compositions
+  Ocean                [Planet]        (Preprocessed string) Ocean data
+  OceanDepth           [Ocean]         (Real number)         Ocean depth, default unit is metres, Km is also available
+  OceanCompositions    [Ocean]         (Preprocessed string) Ocean compositions
   CompName             [Compositions]  (Raw string)          Composition Name
   CompValue            [Compositions]  (Real number)         Composition volume fraction in percent
   SatelliteTable       [Planet]        (Preprocessed string) Satellite table
@@ -576,6 +580,7 @@ void DefaultGeneratorMain(PlanetarySystemPointer& System)
     gbuffer_system(System);
     gbuffer_object(System);
     gbuffer_atmosphere(System);
+    gbuffer_ocean(System);
     composite(System);
     composite1(System);
     final(System);

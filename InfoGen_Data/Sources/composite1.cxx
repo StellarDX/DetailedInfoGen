@@ -23,6 +23,7 @@
 #include "gbuffer_atmosphere.hxx"
 #include "gbuffer_object.hxx"
 #include "IGConf.h"
+#include "gbuffer_ocean.hxx"
 
 std::string BarycenterFormatString;
 std::string BarycenterBinaryFormatString;
@@ -33,6 +34,8 @@ std::string PlanetBinaryFormatString;
 
 std::string AtmosphereFormatString;
 std::string AtmoCompFormatString;
+std::string OceanFormatString;
+std::string OceanCompFormatString;
 
 std::string ObjectTables;
 
@@ -48,6 +51,8 @@ void LoadObjectFormatStrings()
     PlanetBinaryFormatString = LoadTemplateProfile("MultiPlanet");
     AtmosphereFormatString = LoadTemplateProfile("Atmosphere");
     AtmoCompFormatString = LoadTemplateProfile("AtmoComp");
+    OceanFormatString = LoadTemplateProfile("Ocean");
+    OceanCompFormatString = LoadTemplateProfile("OceanComp");
 
     cse::CSESysDebug("composite", cse::CSEDebugger::INFO, "DONE.");
 }
@@ -73,6 +78,30 @@ void CreateAtmosphereData(cse::PlanetarySystemPointer& System)
     else
     {
         ObjectCharacteristics.at(System).push_back(fmt::arg("Atmosphere", ""));
+    }
+}
+
+void CreateOceanData(cse::PlanetarySystemPointer& System)
+{
+    if (OceanData.contains(System))
+    {
+        cse::CSESysDebug("composite1", cse::CSEDebugger::INFO,
+            fmt::format("Creating ocean data for {}", System->PObject->Name[0].ToStdString()));
+        std::string OceanCompositions;
+        for (auto i : System->PObject->Ocean.Composition)
+        {
+            auto CompName = fmt::arg("CompName", i.first.ToStdString());
+            auto CompVal = fmt::arg("CompValue", i.second);
+            OceanCompositions += fmt::vformat(OceanCompFormatString,
+                fmt::make_format_args(CompName, CompVal));
+        }
+        OceanData.at(System).push_back(fmt::arg("OceanCompositions", OceanCompositions));
+        ObjectCharacteristics.at(System).push_back(fmt::arg("Ocean",
+            fmt::vformat(OceanFormatString, OceanData.at(System))));
+    }
+    else
+    {
+        ObjectCharacteristics.at(System).push_back(fmt::arg("Ocean", ""));
     }
 }
 
@@ -113,6 +142,7 @@ void __DFS_AddTable(cse::PlanetarySystemPointer& System)
         if (System->PObject->Type == "Planet")
         {
             CreateAtmosphereData(System);
+            CreateOceanData(System);
             if (System->PObject->Orbit.Binary)
             {
                 ObjectTables.append(fmt::vformat(PlanetBinaryFormatString, ObjectCharacteristics.at(System)));
