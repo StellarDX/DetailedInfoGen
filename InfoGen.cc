@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <format>
 #include <iostream>
 #include <CSE/Base.h>
@@ -14,6 +15,19 @@ SpaceEngine 0.990 详细信息生成器
 这是自由软件；请参考源代码的版权声明。本软件不提供任何保证，甚至不会包括
 可售性或适用于任何特定目的的保证。
 编译器版本：)";
+
+std::filesystem::path getexepath()
+{
+    #ifdef _WIN32
+    char path[MAX_PATH] = { 0 };
+    GetModuleFileName(NULL, path, MAX_PATH);
+    return path;
+    #else
+    char result[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+    return std::string(result, (count > 0) ? count : 0);
+    #endif
+}
 
 int main(int argc, char const* const* argv)
 {
@@ -32,6 +46,13 @@ int main(int argc, char const* const* argv)
     }
     cse::CSESysDebug("Main", cse::CSEDebugger::INFO,
         format("InfoGen HInstance is located at 0x{:X}", uint64(InfoGen)));
+
+    // Check working directory
+    filesystem::path ExecDir = getexepath().parent_path();
+    if (filesystem::current_path() != ExecDir)
+    {
+        filesystem::current_path(ExecDir);
+    }
 
     MainFuncType MainFunc = MainFuncType(GetProcAddress(InfoGen, TEXT("InfoGenMain")));
     if (!MainFunc)

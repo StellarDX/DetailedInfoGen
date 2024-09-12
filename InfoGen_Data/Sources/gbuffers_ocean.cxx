@@ -17,33 +17,29 @@
  *   along with this program; If not, see <https://www.gnu.org/licenses/>.  *
  ****************************************************************************/
 
-#include "gbuffer_atmosphere.hxx"
-#include "CSE/Base/ConstLists.h"
+#include "gbuffers_ocean.hxx"
 
-std::map<cse::PlanetarySystemPointer, fmt::dynamic_format_arg_store<fmt::format_context>> AtmoData;
+std::map<cse::PlanetarySystemPointer, fmt::dynamic_format_arg_store<fmt::format_context>> OceanData;
 
-void __DFS_Proc_Atmosphere(cse::PlanetarySystemPointer& System)
+void __DFS_Proc_Ocean(cse::PlanetarySystemPointer& System)
 {
     if ((System->PObject->Type == "Planet" || System->PObject->Type == "DwarfPlanet" || System->PObject->Type == "Moon")
-        && !System->PObject->NoAtmosphere)
+        && !System->PObject->NoOcean)
     {
-        AtmoData.insert({System, fmt::dynamic_format_arg_store<fmt::format_context>()});
-        AtmoData.at(System).push_back(fmt::arg("AtmoPressure", System->PObject->Atmosphere.Pressure));
-        AtmoData.at(System).push_back(fmt::arg("AtmoPressureHpa", System->PObject->Atmosphere.Pressure / 100));
-        AtmoData.at(System).push_back(fmt::arg("AtmoPressureKpa", System->PObject->Atmosphere.Pressure / 1000));
-        AtmoData.at(System).push_back(fmt::arg("AtmoPressureBar", System->PObject->Atmosphere.Pressure / 100000));
-        AtmoData.at(System).push_back(fmt::arg("AtmoPressureAtm", System->PObject->Atmosphere.Pressure / StandardAtm));
+        OceanData.insert({System, fmt::dynamic_format_arg_store<fmt::format_context>()});
+        OceanData.at(System).push_back(fmt::arg("OceanDepth", System->PObject->Ocean.Height));
+        OceanData.at(System).push_back(fmt::arg("OceanDepthKm", System->PObject->Ocean.Height / 1000));
     }
 
     for (auto i : System->PSubSystem)
     {
-        __DFS_Proc_Atmosphere(i);
+        __DFS_Proc_Ocean(i);
     }
 }
 
-void gbuffer_atmosphere(cse::PlanetarySystemPointer& System)
+void gbuffers_ocean(cse::PlanetarySystemPointer& System)
 {
-    cse::CSESysDebug("gbuffer_atmosphere", cse::CSEDebugger::INFO, "Processing atmosphere...");
-    __DFS_Proc_Atmosphere(System);
-    cse::CSESysDebug("gbuffer_atmosphere", cse::CSEDebugger::INFO, "DONE.");
+    cse::CSESysDebug("gbuffer_ocean", cse::CSEDebugger::INFO, "Processing ocean...");
+    __DFS_Proc_Ocean(System);
+    cse::CSESysDebug("gbuffer_ocean", cse::CSEDebugger::INFO, "DONE.");
 }

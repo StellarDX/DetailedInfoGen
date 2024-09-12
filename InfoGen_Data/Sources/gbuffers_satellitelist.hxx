@@ -19,12 +19,12 @@
 
 #pragma once
 
-#ifndef _IG_GBARICENTER_
-#define _IG_GBARICENTER_
+#ifndef _IG_GSATELISST_
+#define _IG_GSATELISST_
 
 #include <fmt/args.h>
 #include <CSE/PlanSystem.h>
 
-void gbuffer_object_barycenter(cse::PlanetarySystemPointer& System);
+void gbuffers_satellitelist(cse::PlanetarySystemPointer& System);
 
 #endif

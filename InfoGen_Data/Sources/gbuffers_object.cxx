@@ -17,13 +17,12 @@
  *   along with this program; If not, see <https://www.gnu.org/licenses/>.  *
  ****************************************************************************/
 
-#define _USE_CSE_DEFINES
-
-#include "gbuffer_object.hxx"
-#include "gbuffer_object_barycenter.hxx"
-#include "gbuffer_object_star.hxx"
-#include "gbuffer_object_planet.hxx"
-#include <CSE/Base.h>
+#include "gbuffers_object.hxx"
+#include "gbuffers_object_barycenter.hxx"
+#include "gbuffers_object_star.hxx"
+#include "gbuffers_object_planet.hxx"
+#include "gbuffers_object_satellite.hxx"
+#include <CSE/Base/ConstLists.h>
 #include <CSE/Physics/Illuminants.h>
 #include <CSE/Physics/Orbit.h>
 
@@ -76,7 +75,7 @@ void CalculatePosition(cse::PlanetarySystemPointer& System)
         PosBuffer.pop();
         for (auto i : CurrentElem->PSubSystem)
         {
-            if (IsMajorObject(*(i->PObject)))
+            if (IsMajorObject(*(i->PObject)) || i->PObject->Type == "DwarfMoon")
             {
                 Buffer.push(i);
                 auto State = GetCurrentStateFromKeplerianOrbitElements(CurrentElem->PObject->Mass, i->PObject->Orbit);
@@ -352,28 +351,37 @@ void TransferBasicData(cse::PlanetarySystemPointer& System)
     }
 }
 
+std::stack<cse::PlanetarySystemPointer> __ParentStack;
 void __DFS_Iterate(cse::PlanetarySystemPointer& System)
 {
+    __ParentStack.push(System);
+
     if (IsMajorObject(*System->PObject))
     {
         if (System->PObject->Type == "Barycenter")
         {
-            gbuffer_object_barycenter(System);
+            gbuffers_object_barycenter(System);
         }
         else if (System->PObject->Type == "Star")
         {
-            gbuffer_object_star(System);
+            gbuffers_object_star(System);
         }
-        else if (System->PObject->Type == "Planet")
+        else if (System->PObject->Type == "Planet" || System->PObject->Type == "DwarfPlanet")
         {
-            gbuffer_object_planet(System);
+            gbuffers_object_planet(System);
+        }
+        else if (System->PObject->Type == "Moon" || System->PObject->Type == "DwarfMoon")
+        {
+            gbuffers_object_satellite(System);
         }
     }
 
     for (auto& i : System->PSubSystem) {__DFS_Iterate(i);}
+
+    __ParentStack.pop();
 }
 
-void gbuffer_object(cse::PlanetarySystemPointer& System)
+void gbuffers_object(cse::PlanetarySystemPointer& System)
 {
     if (FixOrbitPlane)
     {

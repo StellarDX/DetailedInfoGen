@@ -19,12 +19,22 @@
 
 #pragma once
 
-#ifndef _IG_GSTAR_
-#define _IG_GSTAR_
+#ifndef _IG_GOBJECT_
+#define _IG_GOBJECT_
 
 #include <fmt/args.h>
 #include <CSE/PlanSystem.h>
+#include "CSE/Physics/Orbit.h"
 
-void gbuffer_object_star(cse::PlanetarySystemPointer& System);
+extern std::map<cse::PlanetarySystemPointer, cse::Orbit::OrbitStateType> Coordinates;
+
+extern std::map<cse::PlanetarySystemPointer, std::string> BinaryNatures;
+extern std::vector<fmt::dynamic_format_arg_store<fmt::format_context>> MultipleStarCatalog;
+extern std::map<cse::PlanetarySystemPointer, fmt::dynamic_format_arg_store<fmt::format_context>> ObjectCharacteristics;
+
+bool IsBinaryObject(cse::Object::OrbitParams Orbit1, cse::Object::OrbitParams Orbit2);
+std::string GenerateBinaryNature(cse::PlanetarySystemPointer& Parent, cse::PlanetarySystemPointer& Primary, cse::PlanetarySystemPointer& Secondary);
+
+void gbuffers_object(cse::PlanetarySystemPointer& System);
 
 #endif

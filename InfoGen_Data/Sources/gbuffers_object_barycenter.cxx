@@ -18,8 +18,8 @@
  ****************************************************************************/
 
 #include "CSE/Base/ConstLists.h"
-#include "gbuffer_object.hxx"
-#include "gbuffer_object_barycenter.hxx"
+#include "gbuffers_object.hxx"
+#include "gbuffers_object_barycenter.hxx"
 #include "IGConf.h"
 
 std::string GetBinaryNature(cse::PlanetarySystemPointer& System)
@@ -40,7 +40,7 @@ std::string GetBinaryNature(cse::PlanetarySystemPointer& System)
     }
 }
 
-void gbuffer_object_barycenter(cse::PlanetarySystemPointer& System)
+void gbuffers_object_barycenter(cse::PlanetarySystemPointer& System)
 {
     ObjectCharacteristics.insert({System, fmt::dynamic_format_arg_store<fmt::format_context>()});
     ObjectCharacteristics.at(System).push_back(fmt::arg("Name", System->PObject->Name[0].ToStdString()));

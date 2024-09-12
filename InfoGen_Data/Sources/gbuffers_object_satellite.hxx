@@ -19,12 +19,12 @@
 
 #pragma once
 
-#ifndef _IG_GPLANET_
-#define _IG_GPLANET_
+#ifndef _IG_GSATELLITE_
+#define _IG_GSATELLITE_
 
 #include <fmt/args.h>
 #include <CSE/PlanSystem.h>
 
-void gbuffer_object_planet(cse::PlanetarySystemPointer& System);
+void gbuffers_object_satellite(cse::PlanetarySystemPointer& System);
 
 #endif

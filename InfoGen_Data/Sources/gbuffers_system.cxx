@@ -17,7 +17,7 @@
  *   along with this program; If not, see <https://www.gnu.org/licenses/>.  *
  ****************************************************************************/
 
-#include "gbuffer_system.hxx"
+#include "gbuffers_system.hxx"
 #include "CSE/PlanSystem.h"
 
 cse::ustringlist PopulationStars, PopulationPlanets, PopulationDwarfPlanets;
@@ -56,7 +56,7 @@ void ExportPopulations(cse::PlanetarySystemPointer& System, cse::uint64* NSatell
     }
 }
 
-void gbuffer_system(cse::PlanetarySystemPointer& System)
+void gbuffers_system(cse::PlanetarySystemPointer& System)
 {
     cse::CSESysDebug("gbuffer_system", cse::CSEDebugger::INFO, "Loading population data...");
 

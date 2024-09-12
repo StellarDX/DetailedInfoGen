@@ -17,14 +17,38 @@
  *   along with this program; If not, see <https://www.gnu.org/licenses/>.  *
  ****************************************************************************/
 
-#ifndef _IG_GOCEAN_
-#define _IG_GOCEAN_
+#pragma once
+
+#ifndef _IG_GSYSTEM_
+#define _IG_GSYSTEM_
 
 #include <fmt/args.h>
 #include <CSE/PlanSystem.h>
 
-extern std::map<cse::PlanetarySystemPointer, fmt::dynamic_format_arg_store<fmt::format_context>> OceanData;
+/**
+ * @brief Lists of stars, planets and dwarf-planets, used to generate Contents
+ */
+extern cse::ustringlist PopulationStars, PopulationPlanets, PopulationDwarfPlanets;
+extern cse::uint64 NSatellites, NMinorPlanets, NComets;
 
-void gbuffer_ocean(cse::PlanetarySystemPointer& System);
+/**
+ * @brief Storage of fmt-args, used to fill tables.
+ */
+extern fmt::dynamic_format_arg_store<fmt::format_context> TotalResultValues;
+
+/**
+ * @brief System Age
+ */
+extern cse::float64 SystemAge;
+
+/**
+ * @brief Combined Spectral Type
+ */
+extern cse::ustring CombinedSpectralType;
+
+/**
+ * @brief Main function
+ */
+void gbuffers_system(cse::PlanetarySystemPointer& System);
 
 #endif

@@ -19,8 +19,8 @@
 
 #include "final.hxx"
 #include "composite.hxx"
-#include "gbuffer_system.hxx"
-#include "gbuffer_object.hxx"
+#include "gbuffers_system.hxx"
+#include "gbuffers_object.hxx"
 
 #include "IGConf.h"
 

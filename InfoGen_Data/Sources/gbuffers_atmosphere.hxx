@@ -25,6 +25,6 @@
 
 extern std::map<cse::PlanetarySystemPointer, fmt::dynamic_format_arg_store<fmt::format_context>> AtmoData;
 
-void gbuffer_atmosphere(cse::PlanetarySystemPointer& System);
+void gbuffers_atmosphere(cse::PlanetarySystemPointer& System);
 
 #endif

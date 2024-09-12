@@ -19,36 +19,12 @@
 
 #pragma once
 
-#ifndef _IG_GSYSTEM_
-#define _IG_GSYSTEM_
+#ifndef _IG_GBARICENTER_
+#define _IG_GBARICENTER_
 
 #include <fmt/args.h>
 #include <CSE/PlanSystem.h>
 
-/**
- * @brief Lists of stars, planets and dwarf-planets, used to generate Contents
- */
-extern cse::ustringlist PopulationStars, PopulationPlanets, PopulationDwarfPlanets;
-extern cse::uint64 NSatellites, NMinorPlanets, NComets;
-
-/**
- * @brief Storage of fmt-args, used to fill tables.
- */
-extern fmt::dynamic_format_arg_store<fmt::format_context> TotalResultValues;
-
-/**
- * @brief System Age
- */
-extern cse::float64 SystemAge;
-
-/**
- * @brief Combined Spectral Type
- */
-extern cse::ustring CombinedSpectralType;
-
-/**
- * @brief Main function
- */
-void gbuffer_system(cse::PlanetarySystemPointer& System);
+void gbuffers_object_barycenter(cse::PlanetarySystemPointer& System);
 
 #endif

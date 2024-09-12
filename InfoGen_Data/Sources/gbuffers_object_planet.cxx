@@ -17,9 +17,9 @@
  *   along with this program; If not, see <https://www.gnu.org/licenses/>.  *
  ****************************************************************************/
 
-#include "gbuffer_object_planet.hxx"
+#include "gbuffers_object_planet.hxx"
 #include "CSE/Base/ConstLists.h"
-#include "gbuffer_object.hxx"
+#include "gbuffers_object.hxx"
 #include "IGConf.h"
 
 void CalculateTemperature(cse::PlanetarySystemPointer& System)
@@ -181,7 +181,7 @@ std::string GetPlanetType(cse::PlanetarySystemPointer& System)
     }
 }
 
-void gbuffer_object_planet(cse::PlanetarySystemPointer& System)
+void gbuffers_object_planet(cse::PlanetarySystemPointer& System)
 {
     ObjectCharacteristics.insert({System, fmt::dynamic_format_arg_store<fmt::format_context>()});
     ObjectCharacteristics.at(System).push_back(fmt::arg("Name", System->PObject->Name[0].ToStdString()));
@@ -196,36 +196,42 @@ void gbuffer_object_planet(cse::PlanetarySystemPointer& System)
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPeriod", System->PObject->Orbit.Period));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPeriodDays", System->PObject->Orbit.Period / SynodicDay));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPeriodYears", System->PObject->Orbit.Period / JulianYear));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAphelion", cse::ObjectLiterals::Aphelion(*System->PObject)));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAphelionKm", cse::ObjectLiterals::Aphelion(*System->PObject) / 1000.));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAphelionAU", cse::ObjectLiterals::Aphelion(*System->PObject) / AU));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPerihelion", cse::ObjectLiterals::Perihelion(*System->PObject)));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPerihelionKm", cse::ObjectLiterals::Perihelion(*System->PObject) / 1000.));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPerihelionAU", cse::ObjectLiterals::Perihelion(*System->PObject) / AU));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitSemiMajorAxis", cse::ObjectLiterals::SemiMajorAxis(*System->PObject)));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitSemiMajorAxisKm", cse::ObjectLiterals::SemiMajorAxis(*System->PObject) / 1000.));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitSemiMajorAxisAU", cse::ObjectLiterals::SemiMajorAxis(*System->PObject) / AU));
+    cse::float64 Aphelion = cse::ObjectLiterals::Aphelion(*System->PObject);
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAphelion", Aphelion));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAphelionKm", Aphelion / 1000.));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAphelionAU", Aphelion / AU));
+    cse::float64 Perihelion = cse::ObjectLiterals::Perihelion(*System->PObject);
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPerihelion", Perihelion));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPerihelionKm", Perihelion / 1000.));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitPerihelionAU", Perihelion / AU));
+    cse::float64 SemiMajorAxis = cse::ObjectLiterals::SemiMajorAxis(*System->PObject);
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitSemiMajorAxis", SemiMajorAxis));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitSemiMajorAxisKm", SemiMajorAxis / 1000.));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitSemiMajorAxisAU", SemiMajorAxis / AU));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitEccentricity", System->PObject->Orbit.Eccentricity));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitInclination", System->PObject->Orbit.Inclination));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitAscendingNode", System->PObject->Orbit.AscendingNode));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitArgOfPericenter", System->PObject->Orbit.ArgOfPericenter));
     ObjectCharacteristics.at(System).push_back(fmt::arg("OrbitMeanAnomaly", System->PObject->Orbit.MeanAnomaly));
 
-    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadius", cse::ObjectLiterals::EquatorialRadius(*System->PObject)));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadiusKm", cse::ObjectLiterals::EquatorialRadius(*System->PObject) / 1000));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadiusEarth", cse::ObjectLiterals::EquatorialRadius(*System->PObject) / EarthRadius));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadiusJup", cse::ObjectLiterals::EquatorialRadius(*System->PObject) / JupiterRadius));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadiusSun", cse::ObjectLiterals::EquatorialRadius(*System->PObject) / SolarRadius));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadius", cse::ObjectLiterals::PolarRadius(*System->PObject)));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadiusKm", cse::ObjectLiterals::PolarRadius(*System->PObject) / 1000));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadiusEarth", cse::ObjectLiterals::PolarRadius(*System->PObject) / EarthRadius));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadiusJup", cse::ObjectLiterals::PolarRadius(*System->PObject) / JupiterRadius));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadiusSun", cse::ObjectLiterals::PolarRadius(*System->PObject) / SolarRadius));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadius", cse::ObjectLiterals::MeanRadius(*System->PObject)));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadiusKm", cse::ObjectLiterals::MeanRadius(*System->PObject) / 1000));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadiusEarth", cse::ObjectLiterals::MeanRadius(*System->PObject) / EarthRadius));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadiusJup", cse::ObjectLiterals::MeanRadius(*System->PObject) / JupiterRadius));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadiusSun", cse::ObjectLiterals::MeanRadius(*System->PObject) / SolarRadius));
+    cse::float64 EqRadius = cse::ObjectLiterals::EquatorialRadius(*System->PObject);
+    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadius", EqRadius));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadiusKm", EqRadius / 1000));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadiusEarth", EqRadius / EarthRadius));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadiusJup", EqRadius / JupiterRadius));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("EquatorialRadiusSun", EqRadius / SolarRadius));
+    cse::float64 PoRadius = cse::ObjectLiterals::PolarRadius(*System->PObject);
+    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadius", PoRadius));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadiusKm", PoRadius / 1000));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadiusEarth", PoRadius / EarthRadius));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadiusJup", PoRadius / JupiterRadius));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("PolarRadiusSun", PoRadius / SolarRadius));
+    cse::float64 MeRadius = cse::ObjectLiterals::MeanRadius(*System->PObject);
+    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadius", MeRadius));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadiusKm", MeRadius / 1000));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadiusEarth", MeRadius / EarthRadius));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadiusJup", MeRadius / JupiterRadius));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("MeanRadiusSun", MeRadius / SolarRadius));
     ObjectCharacteristics.at(System).push_back(fmt::arg("DimensionsX", System->PObject->Dimensions.x));
     ObjectCharacteristics.at(System).push_back(fmt::arg("DimensionsY", System->PObject->Dimensions.y));
     ObjectCharacteristics.at(System).push_back(fmt::arg("DimensionsZ", System->PObject->Dimensions.z));
@@ -241,9 +247,10 @@ void gbuffer_object_planet(cse::PlanetarySystemPointer& System)
     ObjectCharacteristics.at(System).push_back(fmt::arg("AverageDensity", cse::ObjectLiterals::MeanDensity(*System->PObject)));
     ObjectCharacteristics.at(System).push_back(fmt::arg("SurfaceGravity", cse::ObjectLiterals::SurfaceGravity(*System->PObject)));
     ObjectCharacteristics.at(System).push_back(fmt::arg("EscapeVelocity", cse::ObjectLiterals::EscapeVelocity(*System->PObject)));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("SynRotationPeriod", cse::ObjectLiterals::SynodicRotationPeriod(*System->PObject)));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("SynRotationPeriodHours", cse::ObjectLiterals::SynodicRotationPeriod(*System->PObject) / 3600));
-    ObjectCharacteristics.at(System).push_back(fmt::arg("SynRotationPeriodDays", cse::ObjectLiterals::SynodicRotationPeriod(*System->PObject) / SynodicDay));
+    cse::float64 SynodicPeriod = cse::ObjectLiterals::SynodicRotationPeriod(*System->PObject);
+    ObjectCharacteristics.at(System).push_back(fmt::arg("SynRotationPeriod", SynodicPeriod));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("SynRotationPeriodHours", SynodicPeriod / 3600));
+    ObjectCharacteristics.at(System).push_back(fmt::arg("SynRotationPeriodDays", SynodicPeriod / SynodicDay));
     ObjectCharacteristics.at(System).push_back(fmt::arg("RotationPeriod", System->PObject->Rotation.RotationPeriod));
     ObjectCharacteristics.at(System).push_back(fmt::arg("RotationPeriodHours", System->PObject->Rotation.RotationPeriod / 3600));
     ObjectCharacteristics.at(System).push_back(fmt::arg("RotationPeriodDays", System->PObject->Rotation.RotationPeriod / SynodicDay));

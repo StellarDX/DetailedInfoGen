@@ -28,10 +28,10 @@
 #include <CSE/PlanSystem.h>
 #include <fmt/args.h>
 
-#include "Sources/gbuffer_atmosphere.hxx"
-#include "Sources/gbuffer_object.hxx"
-#include "Sources/gbuffer_ocean.hxx"
-#include "Sources/gbuffer_system.hxx"
+#include "Sources/gbuffers_atmosphere.hxx"
+#include "Sources/gbuffers_object.hxx"
+#include "Sources/gbuffers_ocean.hxx"
+#include "Sources/gbuffers_system.hxx"
 #include "Sources/composite.hxx"
 #include "Sources/composite1.hxx"
 #include "Sources/final.hxx"
@@ -252,6 +252,7 @@ _TXT(R"(
   OrbitPrimary         [Object]        (Raw string)          Primary object, only used in star systems
   OrbitCompanion       [Object]        (Raw string)          Companion object, only used in star systems
   OrbitPeriod          [Object]        (Real number)         Orbital Period, default unit is seconds, Days and Years are also available.
+  SynOrbitPeriod       [Satellite]     (Real number)         Synodic Orbital Period, default unit is seconds, Days and Years are also available.
   OrbitAphelion        [Object]        (Real number)         Aphelion, default unit is metres, Km and AU are also available.
   OrbitPerihelion      [Object]        (Real number)         Perihelion, default unit is metres, Km and AU are also available.
   OrbitSemiMajorAxis   [Object]        (Real number)         Orbital Semi-major axis, default unit is metres, Km and AU are also available.
@@ -577,10 +578,10 @@ _EXTERN_C
 
 void DefaultGeneratorMain(PlanetarySystemPointer& System)
 {
-    gbuffer_system(System);
-    gbuffer_object(System);
-    gbuffer_atmosphere(System);
-    gbuffer_ocean(System);
+    gbuffers_system(System);
+    gbuffers_object(System);
+    gbuffers_atmosphere(System);
+    gbuffers_ocean(System);
     composite(System);
     composite1(System);
     final(System);
@@ -606,9 +607,9 @@ IGEXPORT void IGCALL InfoGenMain(int argc, char const* const* argv)
         return;
     }
 
-    InfoGenOptionInit();
-
     _MAIN_FUNC_BEGIN
+
+    InfoGenOptionInit();
 
     InfoGenOptionParse(argc, argv);
     if (OptionsVariables.count("help"))

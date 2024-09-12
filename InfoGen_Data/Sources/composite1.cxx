@@ -20,10 +20,10 @@
 #include "CSE/Physics/Illuminants.h"
 #include "final.hxx"
 #include "composite1.hxx"
-#include "gbuffer_atmosphere.hxx"
-#include "gbuffer_object.hxx"
+#include "gbuffers_atmosphere.hxx"
+#include "gbuffers_object.hxx"
 #include "IGConf.h"
-#include "gbuffer_ocean.hxx"
+#include "gbuffers_ocean.hxx"
 
 std::string BarycenterFormatString;
 std::string BarycenterBinaryFormatString;
@@ -31,6 +31,7 @@ std::string StarFormatString;
 std::string StarBinaryFormatString;
 std::string PlanetFormatString;
 std::string PlanetBinaryFormatString;
+std::string SatelliteFormatString;
 
 std::string AtmosphereFormatString;
 std::string AtmoCompFormatString;
@@ -53,6 +54,7 @@ void LoadObjectFormatStrings()
     AtmoCompFormatString = LoadTemplateProfile("AtmoComp");
     OceanFormatString = LoadTemplateProfile("Ocean");
     OceanCompFormatString = LoadTemplateProfile("OceanComp");
+    SatelliteFormatString = LoadTemplateProfile("Satellite");
 
     cse::CSESysDebug("composite", cse::CSEDebugger::INFO, "DONE.");
 }
@@ -139,7 +141,7 @@ void __DFS_AddTable(cse::PlanetarySystemPointer& System)
             }
         }
 
-        if (System->PObject->Type == "Planet")
+        if (System->PObject->Type == "Planet" || System->PObject->Type == "DwarfPlanet")
         {
             CreateAtmosphereData(System);
             CreateOceanData(System);
@@ -151,6 +153,13 @@ void __DFS_AddTable(cse::PlanetarySystemPointer& System)
             {
                 ObjectTables.append(fmt::vformat(PlanetFormatString, ObjectCharacteristics.at(System)));
             }
+        }
+
+        if (System->PObject->Type == "Moon")
+        {
+            CreateAtmosphereData(System);
+            CreateOceanData(System);
+            ObjectTables.append(fmt::vformat(SatelliteFormatString, ObjectCharacteristics.at(System)));
         }
 
         ObjectTables.push_back('\n');
