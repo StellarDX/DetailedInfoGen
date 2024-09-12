@@ -96,7 +96,7 @@ bool IsBinaryObject(cse::Object::OrbitParams Orbit1, cse::Object::OrbitParams Or
 {
     return
     (
-        cse::abs(Orbit1.Period - Orbit2.Period) < 1e-2 &&
+        cse::abs(Orbit1.Period - Orbit2.Period) < 10 &&
         Orbit1.Eccentricity == Orbit2.Eccentricity &&
         Orbit1.Inclination == Orbit2.Inclination &&
         Orbit1.AscendingNode == Orbit2.AscendingNode &&
@@ -356,7 +356,7 @@ void __DFS_Iterate(cse::PlanetarySystemPointer& System)
 {
     __ParentStack.push(System);
 
-    if (IsMajorObject(*System->PObject))
+    if (IsMajorObject(*System->PObject) || System->PObject->Type == "DwarfMoon")
     {
         if (System->PObject->Type == "Barycenter")
         {

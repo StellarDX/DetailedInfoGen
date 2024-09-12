@@ -133,6 +133,7 @@ map<ustring, ustring> StaticStrings
     {"GasGiantClassIII",   "Class III: Cloudless"},
     {"GasGiantClassIV",    "Class IV: Alkali metals"},
     {"GasGiantClassV",     "Class V: Silicate clouds"},
+    {"Asteroid",           "Minor object"},
 };
 
 LPCSTR Usage = _TITLE("Usage\n")
@@ -299,8 +300,6 @@ _TXT(R"(
   CompValue            [Compositions]  (Real number)         Composition volume fraction in percent
   SatelliteTable       [Planet]        (Preprocessed string) Satellite table
   SatelliteTableItems  [SateTable]     (Preprocessed string) Satellite table items
-  SatellitePageSize    [SateTable]     (Integer number)      Satellite table page size
-  SatelliteTotalPages  [SateTable]     (Integer number)      Satellite table total pages
 
 Type "{Variable}" to insert variables into template files.
 Some of real-number type variables support different units, use "TypeUnit" to switch unit. For example, variable "OrbitPeriod"'s default unit is second, if you want to switch unit to days, type "OrbitPeriodDays".

@@ -17,9 +17,14 @@
  *   along with this program; If not, see <https://www.gnu.org/licenses/>.  *
  ****************************************************************************/
 
-#include "gbuffers_satellitelist.hxx"
+#pragma once
 
-void gbuffers_satellitelist(cse::PlanetarySystemPointer& System)
-{
+#ifndef _IG_SATELISST_
+#define _IG_SATELISST_
 
-}
+#include <fmt/args.h>
+#include <CSE/PlanSystem.h>
+
+void SatelliteList(cse::PlanetarySystemPointer& System);
+
+#endif

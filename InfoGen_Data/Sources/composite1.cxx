@@ -24,6 +24,7 @@
 #include "gbuffers_object.hxx"
 #include "IGConf.h"
 #include "gbuffers_ocean.hxx"
+#include "satellitelist.hxx"
 
 std::string BarycenterFormatString;
 std::string BarycenterBinaryFormatString;
@@ -116,6 +117,12 @@ void __DFS_AddTable(cse::PlanetarySystemPointer& System)
 
         if (System->PObject->Type == "Barycenter")
         {
+            if (System->PObject->Class != "Sun") {SatelliteList(System);}
+            else
+            {
+                ObjectCharacteristics.at(System).push_back(fmt::arg("SatelliteTable", ""));
+            }
+
             if (System->PObject->Orbit.Binary)
             {
                 ObjectTables.append(fmt::vformat(BarycenterBinaryFormatString, ObjectCharacteristics.at(System)));
@@ -143,6 +150,11 @@ void __DFS_AddTable(cse::PlanetarySystemPointer& System)
 
         if (System->PObject->Type == "Planet" || System->PObject->Type == "DwarfPlanet")
         {
+            if (!System->PSubSystem.empty()) {SatelliteList(System);}
+            else
+            {
+                ObjectCharacteristics.at(System).push_back(fmt::arg("SatelliteTable", ""));
+            }
             CreateAtmosphereData(System);
             CreateOceanData(System);
             if (System->PObject->Orbit.Binary)

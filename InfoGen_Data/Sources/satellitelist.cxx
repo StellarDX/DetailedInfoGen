@@ -17,14 +17,47 @@
  *   along with this program; If not, see <https://www.gnu.org/licenses/>.  *
  ****************************************************************************/
 
-#pragma once
+#include "satellitelist.hxx"
+#include "gbuffers_object.hxx"
+#include "IGConf.h"
 
-#ifndef _IG_GSATELISST_
-#define _IG_GSATELISST_
+std::string SatelliteTableMainTemplate;
+std::string SatelliteTableItemTemplate;
 
-#include <fmt/args.h>
-#include <CSE/PlanSystem.h>
+void LoadSatelliteTableTemplates()
+{
+    SatelliteTableMainTemplate = LoadTemplateProfile("SateTable");
+    SatelliteTableItemTemplate = LoadTemplateProfile("SateTableRow");
+}
 
-void gbuffers_satellitelist(cse::PlanetarySystemPointer& System);
+std::string GenerateSateTableItem(cse::PlanetarySystemPointer& System)
+{
+    return fmt::vformat(SatelliteTableItemTemplate, ObjectCharacteristics.at(System));
+}
 
-#endif
+void SatelliteList(cse::PlanetarySystemPointer& System)
+{
+    if (System->PSubSystem.empty())
+    {
+        ObjectCharacteristics.at(System).push_back(fmt::arg("SatelliteTable", ""));
+        return;
+    }
+
+    cse::CSESysDebug("satellitelist", cse::CSEDebugger::INFO,
+        fmt::format("Adding satellite list for object: {}", System->PObject->Name[0].ToStdString()));
+
+    LoadSatelliteTableTemplates();
+
+    std::string SateTableItems;
+    for (auto i : System->PSubSystem)
+    {
+        if (ObjectCharacteristics.contains(i))
+        {
+            SateTableItems += GenerateSateTableItem(i);
+        }
+    }
+    auto SateTableItemArg = fmt::arg("SatelliteTableItems", SateTableItems);
+
+    ObjectCharacteristics.at(System).push_back(fmt::arg("SatelliteTable",
+        fmt::vformat(SatelliteTableMainTemplate, fmt::make_format_args(SateTableItemArg))));
+}

@@ -82,6 +82,8 @@ std::string __Sudarsky_Gas_Giant_Classification(cse::float64 Temperature)
 
 std::string GetPlanetType(cse::PlanetarySystemPointer& System)
 {
+    if (System->PObject->Class == "Asteroid") {return StaticStrings.at("Asteroid").ToStdString();}
+
     if (!System->PObject->NoOcean && System->PObject->Ocean.Height > 30000)
     {
         if (System->PObject->Atmosphere.Composition.contains("H2") &&
