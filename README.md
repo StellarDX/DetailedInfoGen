@@ -1,6 +1,6 @@
 # SpaceEngine 0.990 详细信息生成器《星示昭明》(第二版半成品)
 
-协议：[GPLv2](https://www.gnu.org/licenses/licenses.html)
+协议：[GPLv3](https://www.gnu.org/licenses/licenses.html)
 
 上一个详细信息生成器链接：[百度贴吧搬运链接，SE论坛的原链接经检查已经无法访问](https://tieba.baidu.com/p/4458618242)
 
