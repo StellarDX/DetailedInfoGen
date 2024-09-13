@@ -30,6 +30,8 @@ std::string BarycenterFormatString;
 std::string BarycenterBinaryFormatString;
 std::string StarFormatString;
 std::string StarBinaryFormatString;
+std::string BHFormatString;
+std::string BHBinaryFormatString;
 std::string PlanetFormatString;
 std::string PlanetBinaryFormatString;
 std::string SatelliteFormatString;
@@ -49,6 +51,8 @@ void LoadObjectFormatStrings()
     BarycenterBinaryFormatString = LoadTemplateProfile("MultipleSys");
     StarFormatString = LoadTemplateProfile("Star");
     StarBinaryFormatString = LoadTemplateProfile("MultiStar");
+    BHFormatString = LoadTemplateProfile("BlackHole");
+    BHBinaryFormatString = LoadTemplateProfile("BHCompanion");
     PlanetFormatString = LoadTemplateProfile("Planet");
     PlanetBinaryFormatString = LoadTemplateProfile("MultiPlanet");
     AtmosphereFormatString = LoadTemplateProfile("Atmosphere");
@@ -144,6 +148,17 @@ void __DFS_AddTable(cse::PlanetarySystemPointer& System)
                 else
                 {
                     ObjectTables.append(fmt::vformat(StarFormatString, ObjectCharacteristics.at(System)));
+                }
+            }
+            else
+            {
+                if (System->PObject->Orbit.Binary)
+                {
+                    ObjectTables.append(fmt::vformat(BHBinaryFormatString, ObjectCharacteristics.at(System)));
+                }
+                else
+                {
+                    ObjectTables.append(fmt::vformat(BHFormatString, ObjectCharacteristics.at(System)));
                 }
             }
         }

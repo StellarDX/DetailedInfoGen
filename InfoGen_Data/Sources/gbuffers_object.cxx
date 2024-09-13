@@ -96,7 +96,7 @@ bool IsBinaryObject(cse::Object::OrbitParams Orbit1, cse::Object::OrbitParams Or
 {
     return
     (
-        cse::abs(Orbit1.Period - Orbit2.Period) < 10 &&
+        cse::abs(Orbit1.Period - Orbit2.Period) < 30 &&
         Orbit1.Eccentricity == Orbit2.Eccentricity &&
         Orbit1.Inclination == Orbit2.Inclination &&
         Orbit1.AscendingNode == Orbit2.AscendingNode &&
@@ -280,7 +280,7 @@ void TransferOrbitalElems(cse::PlanetarySystemPointer& System)
             {
                 Primary->PObject->Orbit = System->PObject->Orbit;
                 Primary->PObject->ParentBody = System->PObject->ParentBody;
-                System->PObject->Orbit = cse::Object::OrbitParams();
+                //System->PObject->Orbit = cse::Object::OrbitParams();
             }
         }
     }

@@ -103,7 +103,10 @@ map<ustring, ustring> StaticStrings
     {"CHStar",             "CH star"},
     {"WhiteDwarf",         "White dwarf"},
     {"NeutronStar",        "Pulsar"},
-    {"BlackHole",          "Black hole"},
+    {"SchwarzschildBH",    "Schwarzschild Black hole"},
+    {"KerrBH",             "Kerr Black hole"},
+    {"RNBH",               "Reissner-Nordstrom Black hole"},
+    {"KNBH",               "Kerr-Newman Black hole"},
     {"Substellar",         "Substellar Object"},
 
     // Planetary Classifications
@@ -280,6 +283,7 @@ _TXT(R"(
   SurfaceArea          [Object]        (Real number)         Surface Area in m^2
   Volume               [Object]        (Real number)         Volume in m^3
   Mass                 [Object]        (Real number)         Mass, default unit is Kg, Earth, Jup and Sun are also available.
+  SchwarzschildRadius  [BlackHole]     (Real number)         Schwarzschild Radius, default unit is metres, Km, Earth, Jup and Sun are also available.
   AverageDensity       [Object]        (Real number)         Average Density in Kg/m^3
   Age                  [Object]        (Real number)         Age in years
   SurfaceGravity       [Object]        (Real number)         Surface Gravity in m/s^2
@@ -300,6 +304,8 @@ _TXT(R"(
   CompValue            [Compositions]  (Real number)         Composition volume fraction in percent
   SatelliteTable       [Planet]        (Preprocessed string) Satellite table
   SatelliteTableItems  [SateTable]     (Preprocessed string) Satellite table items
+  KerrSpin             [BlackHole]     (Real number)         Spin angular momentum
+  KerrCharge           [BlackHole]     (Real number)         Electric charge
 
 Type "{Variable}" to insert variables into template files.
 Some of real-number type variables support different units, use "TypeUnit" to switch unit. For example, variable "OrbitPeriod"'s default unit is second, if you want to switch unit to days, type "OrbitPeriodDays".
